@@ -1,0 +1,28 @@
+# Carpetas y archivos de entorno
+entornosisesi/
+.vscode/
+
+# Archivos de bases de datos
+sisesi.db
+
+# Archivos y carpetas de Git
+.git/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribución / empaquetado
+build/
+dist/
+*.egg-info/
+
+# Archivos del entorno de ejecución
+*.log
+*.pot
+*.pyc
+*.pyo
+
+# Configuración de IDEs
+.idea/
