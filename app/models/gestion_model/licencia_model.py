@@ -75,3 +75,16 @@ class LicenciaModel:
             logging.error(f"Error al listar las licencias: {e}")
         finally:
             conn.close()
+    
+    
+    @staticmethod
+    def buscar_licencia_por_resolucion(resolucion):
+        try:
+            conn = create_connection()
+            cursor = conn.cursor()
+            cursor.execute("SELECT COUNT(*) FROM Licencia WHERE resolucion_licencia = ?", (resolucion,))
+            return cursor.fetchone()[0]
+        except sqlite3.Error as e:
+            logging.error(f"Error al buscar licencia por resolucion: {e}")
+        finally:
+            conn.close()

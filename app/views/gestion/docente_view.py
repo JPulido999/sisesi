@@ -120,6 +120,16 @@ class DocenteView(tk.Toplevel):
         self.docente_tree.column("Título Esp. Odonto", width=150)
         self.docente_tree.column("Grado Bachiller", width=150)
 
+        # Frame for search
+        self.search_frame = ttk.Frame(self)
+        self.search_frame.pack(padx=10, pady=10, fill=tk.X)
+
+        ttk.Label(self.search_frame, text="Buscar por nombre:").pack(side=tk.LEFT, padx=5)
+        self.search_entry = ttk.Entry(self.search_frame)
+        self.search_entry.pack(side=tk.LEFT, padx=5)
+        self.search_button = ttk.Button(self.search_frame, text="Buscar", command=self.search_docente)
+        self.search_button.pack(side=tk.LEFT, padx=5)
+
     def check_fields(self, *args):
         if all([
             self.entry_nombres.get(),
@@ -201,4 +211,17 @@ class DocenteView(tk.Toplevel):
         # Fetch updated docentes from controller
         docentes = self.controller.list_all_docente()
         for docente in docentes:
+            self.docente_tree.insert("", "end", values=docente)
+            
+    def search_docente(self):
+        search_term = self.search_entry.get().strip().lower()
+        # Clear previous entries
+        for item in self.docente_tree.get_children():
+            self.docente_tree.delete(item)
+
+        # Fetch docentes matching search term
+        docentes = self.controller.list_all_docente()
+        filtered_docentes = [docente for docente in docentes if search_term in docente[1].lower()]
+        
+        for docente in filtered_docentes:
             self.docente_tree.insert("", "end", values=docente)

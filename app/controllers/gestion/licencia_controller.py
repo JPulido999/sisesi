@@ -1,4 +1,4 @@
-from app.views.licencia_view import LicenciaView
+from app.views.gestion.licencia_view import LicenciaView
 from app.models.gestion_model.licencia_model import LicenciaModel
 
 class LicenciaController:
@@ -29,5 +29,10 @@ class LicenciaController:
         self.licencia_model.delete_licencia(id_licencia)
         self.licencia_view.update_licencia_list()
 
+    ############################################
+
     def list_all_licencia(self):
         return self.licencia_model.list_all_licencias()
+    
+    def buscar_licencia_por_resolucion(self, resolucion):
+        return self.licencia_model.buscar_licencia_por_resolucion(resolucion)

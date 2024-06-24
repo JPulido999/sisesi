@@ -1,0 +1,1 @@
+CONVERTIR SQLITE3 A MYSQL: sqlite3 nombre_base_datos.db .dump > backup.sql

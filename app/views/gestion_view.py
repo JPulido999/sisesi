@@ -23,4 +23,12 @@ class GestionView(tk.Toplevel):
             self, text="Gestionar Contrato", command=self.controller.open_contrato_view)
         self.contrato_button.pack()
 
+        self.accion_button = tk.Button(
+            self, text="Gestionar Accion", command=self.controller.open_accion_view)
+        self.accion_button.pack()
+
+        self.licencia_button = tk.Button(
+            self, text="Gestionar Licencia", command=self.controller.open_licencia_view)
+        self.licencia_button.pack()
+
         self.geometry("300x300")
