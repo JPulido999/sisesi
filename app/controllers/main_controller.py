@@ -2,6 +2,7 @@ from app.views.main_view import MainView
 from app.controllers.gestion_controller import GestionController
 from app.controllers.administrar_controller import AdministrarController
 from app.controllers.extraerPlan_controller import ExtraerPlanController
+from app.controllers.reportes_controller import ReportesController
 
 class MainController:
     def __init__(self):
@@ -9,6 +10,7 @@ class MainController:
         self.gestion_controller = None
         self.administrar_controller = None
         self.extraerPlan_controller = None
+        self.reportes_controller = None
 
     def run(self):
         self.main_view.mainloop()
@@ -31,3 +33,8 @@ class MainController:
         if not self.extraerPlan_controller:
             self.extraerPlan_controller = ExtraerPlanController()
         self.extraerPlan_controller.show_view()
+    
+    def open_reportes_view(self):
+        if not self.reportes_controller:
+            self.reportes_controller = ReportesController()
+        self.reportes_controller.show_view()
