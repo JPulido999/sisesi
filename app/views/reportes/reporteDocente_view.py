@@ -1,12 +1,15 @@
 import tkinter as tk
-from tkinter import ttk, messagebox
-from app.views.general_options_view import GeneralOptionsView
+from tkinter import ttk, filedialog, messagebox
+from datetime import datetime
+import openpyxl
+from views.general_options_view import GeneralOptionsView
 
 class ReporteDocenteView(tk.Toplevel):
     def __init__(self, controller):
         super().__init__()
         self.controller = controller
         self.title("Consultar Docentes")
+        self.state('zoomed')
 
         # Frame para la búsqueda
         self.search_frame = ttk.Frame(self)
@@ -22,9 +25,16 @@ class ReporteDocenteView(tk.Toplevel):
         self.search_entry_dni = ttk.Entry(self.search_frame)
         self.search_entry_dni.grid(row=1, column=1, padx=5, pady=5)
 
+        self.search_img=GeneralOptionsView.crear_boton("search.png", 20)
+        self.export_img=GeneralOptionsView.crear_boton("excel.png", 20)
+    
         # Botón de búsqueda
-        self.search_button = ttk.Button(self.search_frame, text="Buscar", command=self.search_docente)
+        self.search_button = ttk.Button(self.search_frame, text="Buscar", image=self.search_img,compound=tk.TOP, command=self.search_docente)
         self.search_button.grid(row=0, column=2, rowspan=2, padx=5, pady=5)
+
+        # Botón para exportar a Excel
+        self.export_button = ttk.Button(self.search_frame, text="Exportar", image=self.export_img,compound=tk.TOP, command=self.export_to_excel)
+        self.export_button.grid(row=0, column=20, rowspan=2, padx=5, pady=5)
 
         # Frame para la tabla
         self.tree_frame = ttk.Frame(self)
@@ -89,7 +99,7 @@ class ReporteDocenteView(tk.Toplevel):
         nombreDocente = self.search_entry_nombre.get().strip().lower()
         dniDocente = self.search_entry_dni.get().strip().lower()
 
-        print(f"Buscando por nombre: {nombreDocente}, DNI: {dniDocente}")  # Agregar esta línea para depuración
+        print(f"Buscando por nombre: {nombreDocente}, DNI: {dniDocente}")
 
         # Limpiar entradas previas
         for item in self.docente_tree.get_children():
@@ -99,3 +109,48 @@ class ReporteDocenteView(tk.Toplevel):
         docentes = self.controller.list_all_consulta_docente(nombreDocente, dniDocente)
         for docente in docentes:
             self.docente_tree.insert("", "end", values=docente)
+
+    def export_to_excel(self):
+        # Crear un nuevo libro de trabajo de Excel
+        workbook = openpyxl.Workbook()
+        sheet = workbook.active
+        sheet.title = "Docentes"
+
+        # Agregar encabezados de columna con formato
+        headers = ["ID", "Nombres", "Apellido Paterno", "Apellido Materno", "Correo", "DNI", "Celular", "Grado Maestro", "Grado Doctor", "Título Profesional", "Título Esp Médico", "Título Esp Odonto", "Grado Bachiller"]
+        sheet.append(headers)
+        for col in sheet.columns:
+            max_length = 0
+            column = col[0].column_letter
+            for cell in col:
+                try:
+                    if len(str(cell.value)) > max_length:
+                        max_length = len(cell.value)
+                except:
+                    pass
+            adjusted_width = (max_length + 2) * 1.2
+            sheet.column_dimensions[column].width = adjusted_width
+
+        # Obtener datos del Treeview y añadir a la hoja
+        for child in self.docente_tree.get_children():
+            values = [self.docente_tree.item(child)["values"][0],  # ID
+                      self.docente_tree.item(child)["values"][1],  # Nombres
+                      self.docente_tree.item(child)["values"][2],  # Apellido Paterno
+                      self.docente_tree.item(child)["values"][3],  # Apellido Materno
+                      self.docente_tree.item(child)["values"][4],  # Correo
+                      self.docente_tree.item(child)["values"][5],  # DNI
+                      self.docente_tree.item(child)["values"][6],  # Celular
+                      self.docente_tree.item(child)["values"][7],  # Grado Maestro
+                      self.docente_tree.item(child)["values"][8],  # Grado Doctor
+                      self.docente_tree.item(child)["values"][9],  # Título Profesional
+                      self.docente_tree.item(child)["values"][10],  # Título Esp Médico
+                      self.docente_tree.item(child)["values"][11],  # Título Esp Odonto
+                      self.docente_tree.item(child)["values"][12]]  # Grado Bachiller
+            sheet.append(values)
+
+        # Pedir al usuario que seleccione la carpeta para guardar el archivo
+        filename = filedialog.asksaveasfilename(defaultextension=".xlsx", filetypes=[("Excel files", "*.xlsx")],
+                                               initialfile="reporte_docentes.xlsx", title="Guardar como...")
+        if filename:
+            workbook.save(filename)
+            messagebox.showinfo("Exportar a Excel", f"Los datos se han exportado correctamente a:\n{filename}")

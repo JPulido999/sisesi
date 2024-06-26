@@ -1,14 +1,17 @@
 import tkinter as tk
-from tkinter import ttk
-from app.views.general_options_view import GeneralOptionsView  # Assuming this import is necessary
+from tkinter import ttk, filedialog, messagebox
+from datetime import datetime
+import openpyxl
+from app.views.general_options_view import GeneralOptionsView
 
 class ReporteAccionView(tk.Toplevel):
     def __init__(self, controller):
         super().__init__()
         self.controller = controller
         self.title("Consultar Acciones")
+        self.state('zoomed')
 
-# Frame para la búsqueda
+        # Frame para la búsqueda
         self.search_frame = ttk.Frame(self)
         self.search_frame.pack(padx=10, pady=10, fill=tk.X)
 
@@ -22,9 +25,16 @@ class ReporteAccionView(tk.Toplevel):
         self.search_entry_dni = ttk.Entry(self.search_frame)
         self.search_entry_dni.grid(row=1, column=1, padx=5, pady=5)
 
+        self.search_img=GeneralOptionsView.crear_boton("search.png", 20)
+        self.export_img=GeneralOptionsView.crear_boton("excel.png", 20)
+    
         # Botón de búsqueda
-        self.search_button = ttk.Button(self.search_frame, text="Buscar", command=self.search_accion)
+        self.search_button = ttk.Button(self.search_frame, text="Buscar", image=self.search_img,compound=tk.TOP, command=self.search_accion)
         self.search_button.grid(row=0, column=2, rowspan=2, padx=5, pady=5)
+
+        # Botón para exportar a Excel
+        self.export_button = ttk.Button(self.search_frame, text="Exportar", image=self.export_img,compound=tk.TOP, command=self.export_to_excel)
+        self.export_button.grid(row=0, column=20, rowspan=2, padx=5, pady=5)
 
         # Frame para la tabla
         self.tree_frame = ttk.Frame(self)
@@ -36,10 +46,9 @@ class ReporteAccionView(tk.Toplevel):
         self.accion_tree = ttk.Treeview(
             self.tree_frame,
             columns=("Docente", "Día", "Hora Inicio", "Hora Fin", "Ambiente", "N° de Alumnos", "Semana",
-                     "Contenido", "Unidad", "Asignatura", "Sigla",
-                     "Semestre", "Plan", "Escuela"),
+                     "Contenido", "Unidad", "Asignatura", "Sigla", "Semestre", "Plan", "Escuela"),
             show="headings",
-            yscrollcommand=self.tree_scroll.set
+            yscrollcommand=self.tree_scroll.set 
         )
         self.tree_scroll.config(command=self.accion_tree.yview)
 
@@ -61,19 +70,19 @@ class ReporteAccionView(tk.Toplevel):
         self.accion_tree.pack(fill=tk.BOTH, expand=True)
 
         # Ajustar tamaño de las columnas
-        self.accion_tree.column("Docente", width=200)
+        self.accion_tree.column("Docente", width=180)
         self.accion_tree.column("Día", width=90)
         self.accion_tree.column("Hora Inicio", width=50)
         self.accion_tree.column("Hora Fin", width=50)
         self.accion_tree.column("Ambiente", width=50)
         self.accion_tree.column("N° de Alumnos", width=50)
-        self.accion_tree.column("Semana", width=50)
+        self.accion_tree.column("Semana", width=70)
         self.accion_tree.column("Contenido", width=200)
         self.accion_tree.column("Unidad", width=50)
         self.accion_tree.column("Asignatura", width=110)
         self.accion_tree.column("Sigla", width=50)
         self.accion_tree.column("Semestre", width=50)
-        self.accion_tree.column("Plan", width=50)
+        self.accion_tree.column("Plan", width=80)
         self.accion_tree.column("Escuela", width=100)
 
         # Actualizar lista de acciones al iniciar la ventana
@@ -93,7 +102,7 @@ class ReporteAccionView(tk.Toplevel):
         nombreDocente = self.search_entry_nombre.get().strip().lower()
         dniDocente = self.search_entry_dni.get().strip().lower()
 
-        print(f"Buscando por nombre: {nombreDocente}, DNI: {dniDocente}")  # Agregar esta línea para depuración
+        print(f"Buscando por nombre: {nombreDocente}, DNI: {dniDocente}")
 
         # Limpiar entradas previas
         for item in self.accion_tree.get_children():
@@ -103,3 +112,50 @@ class ReporteAccionView(tk.Toplevel):
         acciones = self.controller.list_all_consulta_accion(nombreDocente, dniDocente)
         for accion in acciones:
             self.accion_tree.insert("", "end", values=accion)
+
+    def export_to_excel(self):
+        # Crear un nuevo libro de trabajo de Excel
+        workbook = openpyxl.Workbook()
+        sheet = workbook.active
+        sheet.title = "Acciones"
+
+        # Agregar encabezados de columna con formato
+        headers = ["Docente", "Día", "Hora Inicio", "Hora Fin", "Ambiente", "N° de Alumnos", "Semana",
+                   "Contenido", "Unidad", "Asignatura", "Sigla", "Semestre", "Plan", "Escuela"]
+        sheet.append(headers)
+        for col in sheet.columns:
+            max_length = 0
+            column = col[0].column_letter
+            for cell in col:
+                try:
+                    if len(str(cell.value)) > max_length:
+                        max_length = len(cell.value)
+                except:
+                    pass
+            adjusted_width = (max_length + 2) * 1.2
+            sheet.column_dimensions[column].width = adjusted_width
+
+        # Obtener datos del Treeview y añadir a la hoja
+        for child in self.accion_tree.get_children():
+            values = [self.accion_tree.item(child)["values"][0],  # Docente
+                      self.accion_tree.item(child)["values"][1],  # Día
+                      self.accion_tree.item(child)["values"][2],  # Hora Inicio
+                      self.accion_tree.item(child)["values"][3],  # Hora Fin
+                      self.accion_tree.item(child)["values"][4],  # Ambiente
+                      self.accion_tree.item(child)["values"][5],  # N° de Alumnos
+                      self.accion_tree.item(child)["values"][6],  # Semana
+                      self.accion_tree.item(child)["values"][7],  # Contenido
+                      self.accion_tree.item(child)["values"][8],  # Unidad
+                      self.accion_tree.item(child)["values"][9],  # Asignatura
+                      self.accion_tree.item(child)["values"][10],  # Sigla
+                      self.accion_tree.item(child)["values"][11],  # Semestre
+                      self.accion_tree.item(child)["values"][12],  # Plan
+                      self.accion_tree.item(child)["values"][13]]  # Escuela
+            sheet.append(values)
+
+        # Pedir al usuario que seleccione la carpeta para guardar el archivo
+        filename = filedialog.asksaveasfilename(defaultextension=".xlsx", filetypes=[("Excel files", "*.xlsx")],
+                                               initialfile="reporte_acciones.xlsx", title="Guardar como...")
+        if filename:
+            workbook.save(filename)
+            messagebox.showinfo("Exportar a Excel", f"Los datos se han exportado correctamente a:\n{filename}")
