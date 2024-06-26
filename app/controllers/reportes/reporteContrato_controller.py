@@ -17,7 +17,8 @@ class ReporteContratoController:
     def read_contrato(self, id_contrato):
         return self.contrato_model.read_contrato(id_contrato)
 
-
+    def list_all_consulta_contrato(self, nombreDocente, dniDocente):
+        return self.contrato_model.list_all_contratos_c1(nombreDocente, dniDocente)
 
 
     def list_all_contrato(self):

@@ -1,69 +1,32 @@
 import tkinter as tk
 from tkinter import ttk
-from tkinter import messagebox
-from app.views.general_options_view import GeneralOptionsView
+from app.views.general_options_view import GeneralOptionsView  # Assuming this import is necessary
 
 class ReporteAccionView(tk.Toplevel):
     def __init__(self, controller):
         super().__init__()
         self.controller = controller
-        self.title("Gestión de Acción")
+        self.title("Consultar Acciones")
 
-        # Frame para los inputs
-        self.inputs_frame = ttk.Frame(self)
-        self.inputs_frame.pack(padx=10, pady=10)
+# Frame para la búsqueda
+        self.search_frame = ttk.Frame(self)
+        self.search_frame.pack(padx=10, pady=10, fill=tk.X)
 
-        # Función para crear Labels con Entry
-        def create_labeled_entry(row, column, label_text):
-            label = ttk.Label(self.inputs_frame, text=label_text)
-            label.grid(row=row, column=column, padx=5, pady=5, sticky="w")
-            
-            entry = ttk.Entry(self.inputs_frame)
-            entry.grid(row=row, column=column + 1, padx=5, pady=5)
-            
-            return entry
+        # Etiqueta y entrada para buscar por nombre del docente
+        ttk.Label(self.search_frame, text="Nombre del Docente:").grid(row=0, column=0, padx=5, pady=5, sticky="w")
+        self.search_entry_nombre = ttk.Entry(self.search_frame)
+        self.search_entry_nombre.grid(row=0, column=1, padx=5, pady=5)
 
-        # Campos de entrada de datos
-        self.entry_dia_accion = create_labeled_entry(0, 0, "Día")
-        self.entry_horaInicio_accion = create_labeled_entry(0, 2, "Hora Inicio")
-        self.entry_horaFin_accion = create_labeled_entry(0, 4, "Hora Fin")
-        self.entry_ambiente_accion = create_labeled_entry(1, 0, "Ambiente")
-        self.entry_numAlumnos_accion = create_labeled_entry(1, 2, "Número de Alumnos")
-        self.entry_id_tipoActividad = create_labeled_entry(1, 4, "ID Tipo Actividad")
-        self.entry_id_semana = create_labeled_entry(2, 0, "ID Semana")
-        self.entry_id_docente = create_labeled_entry(2, 2, "ID Docente")
+        # Etiqueta y entrada para buscar por DNI del docente
+        ttk.Label(self.search_frame, text="DNI del Docente:").grid(row=1, column=0, padx=5, pady=5, sticky="w")
+        self.search_entry_dni = ttk.Entry(self.search_frame)
+        self.search_entry_dni.grid(row=1, column=1, padx=5, pady=5)
 
-        # Campos obligatorios para habilitar el botón de "CREAR"
-        for entry in [
-            self.entry_dia_accion,
-            self.entry_horaInicio_accion,
-            self.entry_horaFin_accion,
-            self.entry_ambiente_accion,
-            self.entry_numAlumnos_accion,
-            self.entry_id_tipoActividad,
-            self.entry_id_semana,
-            self.entry_id_docente
-        ]:
-            entry.bind("<KeyRelease>", self.check_fields)
+        # Botón de búsqueda
+        self.search_button = ttk.Button(self.search_frame, text="Buscar", command=self.search_accion)
+        self.search_button.grid(row=0, column=2, rowspan=2, padx=5, pady=5)
 
-        # CRUD Buttons Frame
-        self.buttons_frame = ttk.Frame(self)
-        self.buttons_frame.pack(padx=10, pady=10)
-
-        self.create_img = GeneralOptionsView.crear_boton("create.png", 20)
-        self.update_img = GeneralOptionsView.crear_boton("update.png", 20)
-        self.delete_img = GeneralOptionsView.crear_boton("delete.png", 20)
-
-        self.create_button = ttk.Button(self.buttons_frame, text="Crear", image=self.create_img, compound=tk.TOP, command=self.create_accion, state=tk.DISABLED)
-        self.create_button.grid(row=0, column=0, padx=5, pady=5)
-
-        self.update_button = ttk.Button(self.buttons_frame, text="Actualizar", image=self.update_img, compound=tk.TOP, command=self.update_accion)
-        self.update_button.grid(row=0, column=1, padx=5, pady=5)
-
-        self.delete_button = ttk.Button(self.buttons_frame, text="Eliminar", image=self.delete_img, compound=tk.TOP, command=self.delete_accion)
-        self.delete_button.grid(row=0, column=2, padx=5, pady=5)
-
-        # Frame for Treeview with scrollbar
+        # Frame para la tabla
         self.tree_frame = ttk.Frame(self)
         self.tree_frame.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
 
@@ -72,119 +35,71 @@ class ReporteAccionView(tk.Toplevel):
 
         self.accion_tree = ttk.Treeview(
             self.tree_frame,
-            columns=("ID", "Día", "Hora Inicio", "Hora Fin", "Ambiente", "Número de Alumnos", "ID Tipo Actividad", "ID Semana", "ID Docente"),
+            columns=("Docente", "Día", "Hora Inicio", "Hora Fin", "Ambiente", "N° de Alumnos", "Semana",
+                     "Contenido", "Unidad", "Asignatura", "Sigla",
+                     "Semestre", "Plan", "Escuela"),
             show="headings",
             yscrollcommand=self.tree_scroll.set
         )
         self.tree_scroll.config(command=self.accion_tree.yview)
 
-        self.accion_tree.heading("ID", text="ID")
+        self.accion_tree.heading("Docente", text="Docente")
         self.accion_tree.heading("Día", text="Día")
         self.accion_tree.heading("Hora Inicio", text="Hora Inicio")
         self.accion_tree.heading("Hora Fin", text="Hora Fin")
         self.accion_tree.heading("Ambiente", text="Ambiente")
-        self.accion_tree.heading("Número de Alumnos", text="Número de Alumnos")
-        self.accion_tree.heading("ID Tipo Actividad", text="ID Tipo Actividad")
-        self.accion_tree.heading("ID Semana", text="ID Semana")
-        self.accion_tree.heading("ID Docente", text="ID Docente")
+        self.accion_tree.heading("N° de Alumnos", text="N° de Alumnos")
+        self.accion_tree.heading("Semana", text="Semana")
+        self.accion_tree.heading("Contenido", text="Contenido")
+        self.accion_tree.heading("Unidad", text="Unidad")
+        self.accion_tree.heading("Asignatura", text="Asignatura")
+        self.accion_tree.heading("Sigla", text="Sigla")
+        self.accion_tree.heading("Semestre", text="Semestre")
+        self.accion_tree.heading("Plan", text="Plan")
+        self.accion_tree.heading("Escuela", text="Escuela")
+
         self.accion_tree.pack(fill=tk.BOTH, expand=True)
 
         # Ajustar tamaño de las columnas
-        self.accion_tree.column("ID", width=30)
-        self.accion_tree.column("Día", width=100)
-        self.accion_tree.column("Hora Inicio", width=100)
-        self.accion_tree.column("Hora Fin", width=100)
-        self.accion_tree.column("Ambiente", width=100)
-        self.accion_tree.column("Número de Alumnos", width=100)
-        self.accion_tree.column("ID Tipo Actividad", width=100)
-        self.accion_tree.column("ID Semana", width=100)
-        self.accion_tree.column("ID Docente", width=100)
+        self.accion_tree.column("Docente", width=200)
+        self.accion_tree.column("Día", width=90)
+        self.accion_tree.column("Hora Inicio", width=50)
+        self.accion_tree.column("Hora Fin", width=50)
+        self.accion_tree.column("Ambiente", width=50)
+        self.accion_tree.column("N° de Alumnos", width=50)
+        self.accion_tree.column("Semana", width=50)
+        self.accion_tree.column("Contenido", width=200)
+        self.accion_tree.column("Unidad", width=50)
+        self.accion_tree.column("Asignatura", width=110)
+        self.accion_tree.column("Sigla", width=50)
+        self.accion_tree.column("Semestre", width=50)
+        self.accion_tree.column("Plan", width=50)
+        self.accion_tree.column("Escuela", width=100)
 
-        # Frame for search
-        self.search_frame = ttk.Frame(self)
-        self.search_frame.pack(padx=10, pady=10, fill=tk.X)
-
-        ttk.Label(self.search_frame, text="Buscar por día:").pack(side=tk.LEFT, padx=5)
-        self.search_entry = ttk.Entry(self.search_frame)
-        self.search_entry.pack(side=tk.LEFT, padx=5)
-        self.search_button = ttk.Button(self.search_frame, text="Buscar", command=self.search_accion)
-        self.search_button.pack(side=tk.LEFT, padx=5)
-
-    def check_fields(self, *args):
-        if all([
-            self.entry_dia_accion.get(),
-            self.entry_horaInicio_accion.get(),
-            self.entry_horaFin_accion.get(),
-            self.entry_ambiente_accion.get(),
-            self.entry_numAlumnos_accion.get(),
-            self.entry_id_tipoActividad.get(),
-            self.entry_id_semana.get(),
-            self.entry_id_docente.get()
-        ]):
-            self.create_button.config(state=tk.NORMAL)
-        else:
-            self.create_button.config(state=tk.DISABLED)
-
-    def create_accion(self):
-        dia_accion = self.entry_dia_accion.get()
-        horaInicio_accion = self.entry_horaInicio_accion.get()
-        horaFin_accion = self.entry_horaFin_accion.get()
-        ambiente_accion = self.entry_ambiente_accion.get()
-        numAlumnos_accion = self.entry_numAlumnos_accion.get()
-        id_tipoActividad = self.entry_id_tipoActividad.get()
-        id_semana = self.entry_id_semana.get()
-        id_docente = self.entry_id_docente.get()
-
-        self.controller.create_accion(
-            dia_accion, horaInicio_accion, horaFin_accion, ambiente_accion,
-            numAlumnos_accion, id_tipoActividad, id_semana, id_docente
-        )
+        # Actualizar lista de acciones al iniciar la ventana
         self.update_accion_list()
 
-    def update_accion(self):
-        selected_item = self.accion_tree.selection()
-        if selected_item:
-            id_accion = self.accion_tree.item(selected_item)["values"][0]
-            dia_accion = self.entry_dia_accion.get()
-            horaInicio_accion = self.entry_horaInicio_accion.get()
-            horaFin_accion = self.entry_horaFin_accion.get()
-            ambiente_accion = self.entry_ambiente_accion.get()
-            numAlumnos_accion = self.entry_numAlumnos_accion.get()
-            id_tipoActividad = self.entry_id_tipoActividad.get()
-            id_semana = self.entry_id_semana.get()
-            id_docente = self.entry_id_docente.get()
-            self.controller.update_accion(
-                id_accion, dia_accion, horaInicio_accion, horaFin_accion, ambiente_accion,
-                numAlumnos_accion, id_tipoActividad, id_semana, id_docente
-            )
-            self.update_accion_list()
-
-    def delete_accion(self):
-        selected_item = self.accion_tree.selection()
-        if selected_item:
-            id_accion = self.accion_tree.item(selected_item)["values"][0]
-            self.controller.delete_accion(id_accion)
-            self.update_accion_list()
-
     def update_accion_list(self):
-        # Clear previous entries
+        # Limpiar entradas previas
         for item in self.accion_tree.get_children():
             self.accion_tree.delete(item)
 
-        # Fetch updated acciones from controller
-        acciones = self.controller.list_all_accion()
+        # Obtener las acciones actualizadas desde el controlador
+        acciones = self.controller.list_all_consulta_accion("", "")
         for accion in acciones:
             self.accion_tree.insert("", "end", values=accion)
 
     def search_accion(self):
-        search_term = self.search_entry.get().strip().lower()
-        # Clear previous entries
+        nombreDocente = self.search_entry_nombre.get().strip().lower()
+        dniDocente = self.search_entry_dni.get().strip().lower()
+
+        print(f"Buscando por nombre: {nombreDocente}, DNI: {dniDocente}")  # Agregar esta línea para depuración
+
+        # Limpiar entradas previas
         for item in self.accion_tree.get_children():
             self.accion_tree.delete(item)
 
-        # Fetch acciones matching search term
-        acciones = self.controller.list_all_accion()
-        filtered_acciones = [accion for accion in acciones if search_term in accion[1].lower()]
-        
-        for accion in filtered_acciones:
+        # Obtener acciones que coincidan con los términos de búsqueda
+        acciones = self.controller.list_all_consulta_accion(nombreDocente, dniDocente)
+        for accion in acciones:
             self.accion_tree.insert("", "end", values=accion)

@@ -1,90 +1,41 @@
 import tkinter as tk
-from tkinter import ttk
-from tkinter import messagebox
-
+from tkinter import ttk, messagebox
 from app.views.general_options_view import GeneralOptionsView
 
 class ReporteDocenteView(tk.Toplevel):
     def __init__(self, controller):
         super().__init__()
         self.controller = controller
-        self.title("Gestión de Docente")
+        self.title("Consultar Docentes")
 
-        # Frame para los inputs
-        self.inputs_frame = ttk.Frame(self)
-        self.inputs_frame.pack(padx=10, pady=10)
+        # Frame para la búsqueda
+        self.search_frame = ttk.Frame(self)
+        self.search_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
 
-        # Función para crear Labels con or más claro
-        def create_labeled_entry(row, column, label_text):
-            label = ttk.Label(self.inputs_frame, text=label_text)
-            label.grid(row=row, column=column, padx=5, pady=5, sticky="w")
-            
-            entry = ttk.Entry(self.inputs_frame)
-            entry.grid(row=row, column=column + 1, padx=5, pady=5)
-            
-            return entry
+        # Etiqueta y entrada para buscar por nombre del docente
+        ttk.Label(self.search_frame, text="Nombre del Docente:").grid(row=0, column=0, padx=5, pady=5, sticky="w")
+        self.search_entry_nombre = ttk.Entry(self.search_frame)
+        self.search_entry_nombre.grid(row=0, column=1, padx=5, pady=5)
 
-        
-        self.entry_nombres = create_labeled_entry(0, 0, "Nombres")
-        self.entry_apellido_paterno = create_labeled_entry(0, 2, "Apellido Paterno")
-        self.entry_apellido_materno = create_labeled_entry(0, 4, "Apellido Materno")
-        self.entry_correo = create_labeled_entry(1, 0, "Correo")
-        self.entry_dni = create_labeled_entry(1, 2, "DNI")
-        self.entry_celular = create_labeled_entry(1, 4, "Celular")
-        self.entry_grado_maestro = create_labeled_entry(2, 0, "Grado Maestro")
-        self.entry_grado_doctor = create_labeled_entry(2, 2, "Grado Doctor")
-        self.entry_titulo_profesional = create_labeled_entry(2, 4, "Título Profesional")
-        self.entry_titulo_esp_medico = create_labeled_entry(3, 0, "Título Esp. Médico")
-        self.entry_titulo_esp_odonto = create_labeled_entry(3, 2, "Título Esp. Odonto")
-        self.entry_grado_bachiller = create_labeled_entry(3, 4, "Grado Bachiller")
+        # Etiqueta y entrada para buscar por DNI del docente
+        ttk.Label(self.search_frame, text="DNI del Docente:").grid(row=1, column=0, padx=5, pady=5, sticky="w")
+        self.search_entry_dni = ttk.Entry(self.search_frame)
+        self.search_entry_dni.grid(row=1, column=1, padx=5, pady=5)
 
+        # Botón de búsqueda
+        self.search_button = ttk.Button(self.search_frame, text="Buscar", command=self.search_docente)
+        self.search_button.grid(row=0, column=2, rowspan=2, padx=5, pady=5)
 
-
-
-        #Campos obligatorios para habilitar el boton de "CREAR"
-        for entry in [
-            self.entry_nombres,
-            self.entry_apellido_paterno,
-            self.entry_apellido_materno,
-            self.entry_correo,
-            self.entry_dni,
-            self.entry_celular,
-            self.entry_grado_maestro,
-            self.entry_grado_doctor,
-            self.entry_titulo_profesional,
-            self.entry_titulo_esp_medico,
-            self.entry_titulo_esp_odonto,
-            self.entry_grado_bachiller
-        ]:
-            entry.bind("<KeyRelease>", self.check_fields)
-
-        # CRUD Buttons Frame
-        self.buttons_frame = ttk.Frame(self)
-        self.buttons_frame.pack(padx=10, pady=10)
-
-        self.create_img=GeneralOptionsView.crear_boton("create.png", 20)
-        self.update_img=GeneralOptionsView.crear_boton("update.png", 20)
-        self.delete_img=GeneralOptionsView.crear_boton("delete.png", 20)
-
-        self.create_button = ttk.Button(self.buttons_frame, text="Crear", image=self.create_img, compound=tk.TOP, command=self.create_docente, state=tk.DISABLED)
-        self.create_button.grid(row=0, column=0, padx=5, pady=5)
-
-        self.update_button = ttk.Button(self.buttons_frame, text="Actualizar", image=self.update_img, compound=tk.TOP, command=self.update_docente)
-        self.update_button.grid(row=0, column=1, padx=5, pady=5)
-
-        self.delete_button = ttk.Button(self.buttons_frame, text="Eliminar", image=self.delete_img, compound=tk.TOP, command=self.delete_docente)
-        self.delete_button.grid(row=0, column=2, padx=5, pady=5)
-
-        # Frame for Treeview with scrollbar
+        # Frame para la tabla
         self.tree_frame = ttk.Frame(self)
-        self.tree_frame.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
+        self.tree_frame.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
 
         self.tree_scroll = ttk.Scrollbar(self.tree_frame, orient=tk.VERTICAL)
-        self.tree_scroll.pack(side=tk.RIGHT, fill=tk.Y)
+        self.tree_scroll.grid(row=0, column=1, sticky="ns")
 
         self.docente_tree = ttk.Treeview(
             self.tree_frame,
-            columns=("ID", "Nombres", "Apellido Paterno", "Apellido Materno", "Correo", "DNI", "Celular", "Grado Maestro", "Grado Doctor", "Título Profesional", "Título Esp. Médico", "Título Esp. Odonto", "Grado Bachiller"),
+            columns=("ID", "Nombres", "Apellido Paterno", "Apellido Materno", "Correo", "DNI", "Celular", "Grado Maestro", "Grado Doctor", "Título Profesional", "Título Esp Médico", "Título Esp Odonto", "Grado Bachiller"),
             show="headings",
             yscrollcommand=self.tree_scroll.set
         )
@@ -100,128 +51,51 @@ class ReporteDocenteView(tk.Toplevel):
         self.docente_tree.heading("Grado Maestro", text="Grado Maestro")
         self.docente_tree.heading("Grado Doctor", text="Grado Doctor")
         self.docente_tree.heading("Título Profesional", text="Título Profesional")
-        self.docente_tree.heading("Título Esp. Médico", text="Título Esp. Médico")
-        self.docente_tree.heading("Título Esp. Odonto", text="Título Esp. Odonto")
+        self.docente_tree.heading("Título Esp Médico", text="Título Esp Médico")
+        self.docente_tree.heading("Título Esp Odonto", text="Título Esp Odonto")
         self.docente_tree.heading("Grado Bachiller", text="Grado Bachiller")
-        self.docente_tree.pack(fill=tk.BOTH, expand=True)
+
+        self.docente_tree.grid(row=0, column=0, sticky="nsew")
 
         # Ajustar tamaño de las columnas
-        self.docente_tree.column("ID", width=30)
+        self.docente_tree.column("ID", width=50)
         self.docente_tree.column("Nombres", width=150)
-        self.docente_tree.column("Apellido Paterno", width=150)
-        self.docente_tree.column("Apellido Materno", width=150)
-        self.docente_tree.column("Correo", width=150)
-        self.docente_tree.column("DNI", width=60)
-        self.docente_tree.column("Celular", width=70)
+        self.docente_tree.column("Apellido Paterno", width=100)
+        self.docente_tree.column("Apellido Materno", width=100)
+        self.docente_tree.column("Correo", width=200)
+        self.docente_tree.column("DNI", width=80)
+        self.docente_tree.column("Celular", width=100)
         self.docente_tree.column("Grado Maestro", width=150)
         self.docente_tree.column("Grado Doctor", width=150)
         self.docente_tree.column("Título Profesional", width=150)
-        self.docente_tree.column("Título Esp. Médico", width=150)
-        self.docente_tree.column("Título Esp. Odonto", width=150)
+        self.docente_tree.column("Título Esp Médico", width=150)
+        self.docente_tree.column("Título Esp Odonto", width=150)
         self.docente_tree.column("Grado Bachiller", width=150)
 
-        # Frame for search
-        self.search_frame = ttk.Frame(self)
-        self.search_frame.pack(padx=10, pady=10, fill=tk.X)
-
-        ttk.Label(self.search_frame, text="Buscar por nombre:").pack(side=tk.LEFT, padx=5)
-        self.search_entry = ttk.Entry(self.search_frame)
-        self.search_entry.pack(side=tk.LEFT, padx=5)
-        self.search_button = ttk.Button(self.search_frame, text="Buscar", command=self.search_docente)
-        self.search_button.pack(side=tk.LEFT, padx=5)
-
-    def check_fields(self, *args):
-        if all([
-            self.entry_nombres.get(),
-            self.entry_apellido_paterno.get(),
-            self.entry_apellido_materno.get(),
-            self.entry_correo.get(),
-            self.entry_dni.get(),
-            self.entry_celular.get(),
-            self.entry_grado_maestro.get(),
-            self.entry_grado_doctor.get(),
-            self.entry_titulo_profesional.get(),
-            self.entry_titulo_esp_medico.get(),
-            self.entry_titulo_esp_odonto.get(),
-            self.entry_grado_bachiller.get()
-        ]):
-            self.create_button.config(state=tk.NORMAL)
-        else:
-            self.create_button.config(state=tk.DISABLED)
-
-    def create_docente(self):
-        nombres = self.entry_nombres.get()
-        apellido_paterno = self.entry_apellido_paterno.get()
-        apellido_materno = self.entry_apellido_materno.get()
-        correo = self.entry_correo.get()
-        dni = self.entry_dni.get()
-        celular = self.entry_celular.get()
-        grado_maestro = self.entry_grado_maestro.get()
-        grado_doctor = self.entry_grado_doctor.get()
-        titulo_profesional = self.entry_titulo_profesional.get()
-        titulo_esp_medico = self.entry_titulo_esp_medico.get()
-        titulo_esp_odonto = self.entry_titulo_esp_odonto.get()
-        grado_bachiller = self.entry_grado_bachiller.get()
-
-        if self.controller.buscar_docente_por_dni(dni):
-            messagebox.showinfo("Advertencia", "El Docente ya está registrado")
-        else:
-            self.controller.create_docente(
-                nombres, apellido_paterno, apellido_materno, correo, dni, celular,
-                grado_maestro, grado_doctor, titulo_profesional, titulo_esp_medico,
-                titulo_esp_odonto, grado_bachiller
-            )
-            self.update_docente_list()
-
-    def update_docente(self):
-        selected_item = self.docente_tree.selection()
-        if selected_item:
-            id_docente = self.docente_tree.item(selected_item)["values"][0]
-            nombres = self.entry_nombres.get()
-            apellido_paterno = self.entry_apellido_paterno.get()
-            apellido_materno = self.entry_apellido_materno.get()
-            correo = self.entry_correo.get()
-            dni = self.entry_dni.get()
-            celular = self.entry_celular.get()
-            grado_maestro = self.entry_grado_maestro.get()
-            grado_doctor = self.entry_grado_doctor.get()
-            titulo_profesional = self.entry_titulo_profesional.get()
-            titulo_esp_medico = self.entry_titulo_esp_medico.get()
-            titulo_esp_odonto = self.entry_titulo_esp_odonto.get()
-            grado_bachiller = self.entry_grado_bachiller.get()
-            self.controller.update_docente(
-                id_docente, nombres, apellido_paterno, apellido_materno, correo, dni,
-                celular, grado_maestro, grado_doctor, titulo_profesional, titulo_esp_medico,
-                titulo_esp_odonto, grado_bachiller
-            )
-            self.update_docente_list()
-
-    def delete_docente(self):
-        selected_item = self.docente_tree.selection()
-        if selected_item:
-            id_docente = self.docente_tree.item(selected_item)["values"][0]
-            self.controller.delete_docente(id_docente)
-            self.update_docente_list()
+        # Actualizar lista de docentes al iniciar la ventana
+        self.update_docente_list()
 
     def update_docente_list(self):
-        # Clear previous entries
+        # Limpiar entradas previas
         for item in self.docente_tree.get_children():
             self.docente_tree.delete(item)
 
-        # Fetch updated docentes from controller
-        docentes = self.controller.list_all_docente()
+        # Obtener las docentes actualizados desde el controlador
+        docentes = self.controller.list_all_consulta_docente("", "")
         for docente in docentes:
             self.docente_tree.insert("", "end", values=docente)
-            
+
     def search_docente(self):
-        search_term = self.search_entry.get().strip().lower()
-        # Clear previous entries
+        nombreDocente = self.search_entry_nombre.get().strip().lower()
+        dniDocente = self.search_entry_dni.get().strip().lower()
+
+        print(f"Buscando por nombre: {nombreDocente}, DNI: {dniDocente}")  # Agregar esta línea para depuración
+
+        # Limpiar entradas previas
         for item in self.docente_tree.get_children():
             self.docente_tree.delete(item)
 
-        # Fetch docentes matching search term
-        docentes = self.controller.list_all_docente()
-        filtered_docentes = [docente for docente in docentes if search_term in docente[1].lower()]
-        
-        for docente in filtered_docentes:
+        # Obtener docentes que coincidan con los términos de búsqueda
+        docentes = self.controller.list_all_consulta_docente(nombreDocente, dniDocente)
+        for docente in docentes:
             self.docente_tree.insert("", "end", values=docente)

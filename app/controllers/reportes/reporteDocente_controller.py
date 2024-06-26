@@ -21,6 +21,9 @@ class ReporteDocenteController:
 
     ############################################
 
+    def list_all_consulta_docente(self, nombreDocente, dniDocente):
+        return self.docente_model.list_all_docentes_c1(nombreDocente, dniDocente)
+    
     def list_all_docente(self):
         return self.docente_model.list_all_docente()
     

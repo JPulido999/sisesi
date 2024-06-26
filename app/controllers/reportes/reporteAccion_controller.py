@@ -16,7 +16,9 @@ class ReporteAccionController:
 
     def read_accion(self, id_accion):
         return self.accion_model.read_accion(id_accion)
-
+    
+    def list_all_consulta_accion(self, nombreDocente, dniDocente):
+        return self.accion_model.list_all_acciones_c1(nombreDocente, dniDocente)
 
     def list_all_accion(self):
         return self.accion_model.list_all_acciones()
