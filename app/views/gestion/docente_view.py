@@ -9,6 +9,7 @@ class DocenteView(tk.Toplevel):
         super().__init__()
         self.controller = controller
         self.title("Gestión de Docente")
+        self.state('zoomed')
 
         # Frame para los inputs
         self.inputs_frame = ttk.Frame(self)
@@ -23,7 +24,6 @@ class DocenteView(tk.Toplevel):
             entry.grid(row=row, column=column + 1, padx=5, pady=5)
             
             return entry
-
         
         self.entry_nombres = create_labeled_entry(0, 0, "Nombres")
         self.entry_apellido_paterno = create_labeled_entry(0, 2, "Apellido Paterno")
@@ -37,9 +37,6 @@ class DocenteView(tk.Toplevel):
         self.entry_titulo_esp_medico = create_labeled_entry(3, 0, "Título Esp. Médico")
         self.entry_titulo_esp_odonto = create_labeled_entry(3, 2, "Título Esp. Odonto")
         self.entry_grado_bachiller = create_labeled_entry(3, 4, "Grado Bachiller")
-
-
-
 
         #Campos obligatorios para habilitar el boton de "CREAR"
         for entry in [
@@ -120,6 +117,7 @@ class DocenteView(tk.Toplevel):
         self.docente_tree.column("Título Esp. Odonto", width=150)
         self.docente_tree.column("Grado Bachiller", width=150)
 
+        self.docente_tree.bind('<<TreeviewSelect>>', self.load_selected_docente)
         # Frame for search
         self.search_frame = ttk.Frame(self)
         self.search_frame.pack(padx=10, pady=10, fill=tk.X)
@@ -148,6 +146,35 @@ class DocenteView(tk.Toplevel):
             self.create_button.config(state=tk.NORMAL)
         else:
             self.create_button.config(state=tk.DISABLED)
+
+    def load_selected_docente(self, event):
+        selected_item = self.docente_tree.selection()
+        if selected_item:
+            item_values = self.docente_tree.item(selected_item)["values"]
+            self.entry_nombres.delete(0, tk.END)
+            self.entry_nombres.insert(0, item_values[1])
+            self.entry_apellido_paterno.delete(0, tk.END)
+            self.entry_apellido_paterno.insert(0, item_values[2])
+            self.entry_apellido_materno.delete(0, tk.END)
+            self.entry_apellido_materno.insert(0, item_values[3])
+            self.entry_correo.delete(0, tk.END)
+            self.entry_correo.insert(0, item_values[4])
+            self.entry_dni.delete(0, tk.END)
+            self.entry_dni.insert(0, item_values[5])
+            self.entry_celular.delete(0, tk.END)
+            self.entry_celular.insert(0, item_values[6])
+            self.entry_grado_maestro.delete(0, tk.END)
+            self.entry_grado_maestro.insert(0, item_values[7])
+            self.entry_grado_doctor.delete(0, tk.END)
+            self.entry_grado_doctor.insert(0, item_values[8])
+            self.entry_titulo_profesional.delete(0, tk.END)
+            self.entry_titulo_profesional.insert(0, item_values[9])
+            self.entry_titulo_esp_medico.delete(0, tk.END)
+            self.entry_titulo_esp_medico.insert(0, item_values[10])
+            self.entry_titulo_esp_odonto.delete(0, tk.END)
+            self.entry_titulo_esp_odonto.insert(0, item_values[11])
+            self.entry_grado_bachiller.delete(0, tk.END)
+            self.entry_grado_bachiller.insert(0, item_values[12])
 
     def create_docente(self):
         nombres = self.entry_nombres.get()
@@ -194,7 +221,6 @@ class DocenteView(tk.Toplevel):
                 celular, grado_maestro, grado_doctor, titulo_profesional, titulo_esp_medico,
                 titulo_esp_odonto, grado_bachiller
             )
-            self.update_docente_list()
 
     def delete_docente(self):
         selected_item = self.docente_tree.selection()

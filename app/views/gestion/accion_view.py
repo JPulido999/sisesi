@@ -8,6 +8,7 @@ class AccionView(tk.Toplevel):
         super().__init__()
         self.controller = controller
         self.title("Gestión de Acción")
+        self.state('zoomed')
 
         # Frame para los inputs
         self.inputs_frame = ttk.Frame(self)
@@ -100,6 +101,8 @@ class AccionView(tk.Toplevel):
         self.accion_tree.column("ID Semana", width=100)
         self.accion_tree.column("ID Docente", width=100)
 
+        self.accion_tree.bind('<<TreeviewSelect>>', self.load_selected_accion)
+
         # Frame for search
         self.search_frame = ttk.Frame(self)
         self.search_frame.pack(padx=10, pady=10, fill=tk.X)
@@ -124,6 +127,27 @@ class AccionView(tk.Toplevel):
             self.create_button.config(state=tk.NORMAL)
         else:
             self.create_button.config(state=tk.DISABLED)
+
+    def load_selected_accion(self, event):
+        selected_item = self.accion_tree.selection()
+        if selected_item:
+            item_values = self.accion_tree.item(selected_item)["values"]
+            self.entry_dia_accion.delete(0, tk.END)
+            self.entry_dia_accion.insert(0, item_values[1])
+            self.entry_horaInicio_accion.delete(0, tk.END)
+            self.entry_horaInicio_accion.insert(0, item_values[2])
+            self.entry_horaFin_accion.delete(0, tk.END)
+            self.entry_horaFin_accion.insert(0, item_values[3])
+            self.entry_ambiente_accion.delete(0, tk.END)
+            self.entry_ambiente_accion.insert(0, item_values[4])
+            self.entry_numAlumnos_accion.delete(0, tk.END)
+            self.entry_numAlumnos_accion.insert(0, item_values[5])
+            self.entry_id_tipoActividad.delete(0, tk.END)
+            self.entry_id_tipoActividad.insert(0, item_values[6])
+            self.entry_id_semana.delete(0, tk.END)
+            self.entry_id_semana.insert(0, item_values[7])
+            self.entry_id_docente.delete(0, tk.END)
+            self.entry_id_docente.insert(0, item_values[8])
 
     def create_accion(self):
         dia_accion = self.entry_dia_accion.get()
