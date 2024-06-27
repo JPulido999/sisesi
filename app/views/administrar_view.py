@@ -10,6 +10,7 @@ class AdministrarView(tk.Toplevel):
         self.controller = controller
         self.title("Administrar PDF")
         self.geometry("400x600")  # Ampliar para ajustar nuevos campos
+        self.iconbitmap("C:\\Users\\Admin\\Desktop\\SISESI\\app\\resources\\images\\logo-unsch.ico")
         
         self.select_pdf_button = tk.Button(self, text="Seleccionar PDF", command=self.select_pdf)
         self.select_pdf_button.pack(pady=10)

@@ -9,6 +9,7 @@ class ExtraerPlanView(tk.Toplevel):
         self.controller = controller
         self.title("Extraer Planes de Trabajo")
         self.geometry("600x400")
+        self.iconbitmap("C:\\Users\\Admin\\Desktop\\SISESI\\app\\resources\\images\\logo-unsch.ico")
 
         self.btn_extraer = tk.Button(self, text="Extraer", command=self.on_extraer_click)
         self.btn_extraer.pack(pady=20)
