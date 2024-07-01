@@ -8,6 +8,7 @@ from app.models.database import create_connection
 from app.models.gestion_model.docente_model import DocenteModel
 from app.models.gestion_model.contrato_model import ContratoModel
 from app.models.gestion_model.accion_model import AccionModel
+from app.views.extraerPlan_view import ExtraerPlanView
 
 class ExtraerPlanController:
     def __init__(self):
@@ -17,10 +18,10 @@ class ExtraerPlanController:
         self.accion_model = AccionModel()
 
     def show_view(self):
-        if not self.view:
-            from app.views.extraerPlan_view import ExtraerPlanView
+        if not self.view or not self.view.winfo_exists():
             self.view = ExtraerPlanView(self)
-            self.view.deiconify()
+        self.view.deiconify()
+        self.view.grab_set()
 
     def process_excel_files(self):
         folder_path = filedialog.askdirectory(title="Selecciona la carpeta con los archivos Excel")
@@ -119,8 +120,14 @@ class ExtraerPlanController:
             actions = []
             
             for row in range(start_row, end_row + 1):
-                hora_inicio = sheet1.cell(row=row, column=1).value  # Horas en la columna A
-                hora_fin = sheet1.cell(row=row, column=1).value#(datetime.datetime.combine(datetime.date.today(), hora_inicio) + datetime.timedelta(hours=1)).time()  # Asumiendo que cada bloque es de 1 hora
+                horas = sheet1.cell(row=row, column=1).value  # Obtener el valor de la celda
+                if horas:
+                    # Separar las horas de inicio y fin
+                    hora_inicio, hora_fin = horas.split('-')
+                    
+                    # Agregar los minutos para el formato HH:MM
+                    hora_inicio = hora_inicio + ":00"
+                    hora_fin = hora_fin + ":00"
                 
                 for day_index, day in enumerate(days_of_week):
                     day_col_start = start_col + day_index * columns_per_day
@@ -129,7 +136,22 @@ class ExtraerPlanController:
                     num_alumnos = sheet1.cell(row=row, column=day_col_start + 4).value
                     
                     if ambiente and sigla_tipoActividad and num_alumnos:  # Verificar si hay datos válidos en las celdas
-                        action_data = {
+                        action_dataLectiva = {
+                            "dia_accion": day,
+                            "horaInicio_accion": hora_inicio,
+                            "horaFin_accion": hora_fin,
+                            "ambiente_accion": ambiente,
+                            "numAlumnos_accion": num_alumnos,
+                            "id_tipoActividad": self.get_id_from_table_Tipo_Actividad(conn, "Tipo_Actividad", "sigla_tipoActividad", sigla_tipoActividad),
+                            "id_semana": self.get_id_from_table(conn, "Semana", "nombre_semana", 'SEMANA 1'),  # Asumiendo 'SEMANA 1' para simplificar
+                            "id_docente": docente_id
+                        }
+                        
+                        self.accion_model.insert_accion_desde_excel(action_dataLectiva)
+                        actions.append(action_dataLectiva)
+
+                    elif sigla_tipoActividad:
+                        action_dataNoLectiva = { 
                             "dia_accion": day,
                             "horaInicio_accion": hora_inicio,
                             "horaFin_accion": hora_fin,
@@ -141,8 +163,8 @@ class ExtraerPlanController:
                         }
                             #"id_regimen": self.get_id_from_table(conn, "Regimen", "nombre_regimen", sheet2['C9'].value),
                         
-                        self.accion_model.insert_accion_desde_excel(action_data)
-                        actions.append(action_data)
+                        self.accion_model.insert_accion_desde_excel(action_dataNoLectiva)
+                        actions.append(action_dataNoLectiva)
             return {
                 "archivo": os.path.basename(filepath),
                 "docente": docente_data,

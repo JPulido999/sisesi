@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog
-from app.controllers.extraerPlan_controller import ExtraerPlanController
+from app.views.general_options_view import GeneralOptionsView
 
 class ExtraerPlanView(tk.Toplevel):
     def __init__(self, controller):
@@ -11,19 +11,30 @@ class ExtraerPlanView(tk.Toplevel):
         self.geometry("600x400")
         self.iconbitmap("C:\\Users\\Admin\\Desktop\\SISESI\\app\\resources\\images\\logo-unsch.ico")
 
-        self.btn_extraer = tk.Button(self, text="Extraer", command=self.on_extraer_click)
+        self.extraer_img = GeneralOptionsView.crear_boton("extract-folder.png", 50)
+
+        self.btn_extraer = tk.Button(self, text="Extraer", image=self.extraer_img, compound=tk.TOP, command=self.on_extraer_click)
         self.btn_extraer.pack(pady=20)
 
         self.info_label = tk.Label(self, text="")
         self.info_label.pack(pady=10)
 
         self.tree = ttk.Treeview(self, columns=("Archivo", "Docente", "Correo", "DNI", "Celular"), show="headings")
+
         self.tree.heading("Archivo", text="Archivo")
         self.tree.heading("Docente", text="Docente")
         self.tree.heading("Correo", text="Correo")
         self.tree.heading("DNI", text="DNI")
         self.tree.heading("Celular", text="Celular")
+
         self.tree.pack(expand=True, fill=tk.BOTH)
+
+        # Ajustar tamaño de las columnas
+        self.tree.column("Archivo", width=150)
+        self.tree.column("Docente", width=150)
+        self.tree.column("Correo", width=100)
+        self.tree.column("DNI", width=80)
+        self.tree.column("Celular", width=100)
 
     def on_extraer_click(self):
         self.controller.process_excel_files()
