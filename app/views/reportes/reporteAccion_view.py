@@ -120,7 +120,7 @@ class ReporteAccionView(tk.Toplevel):
         sheet.title = "Acciones"
 
         # Agregar encabezados de columna con formato
-        headers = ["Docente", "Día", "Hora Inicio", "Hora Fin", "Ambiente", "N° de Alumnos", "Semana",
+        headers = ["Docente", "Día", "H. Inicio", "H. Fin", "Ambiente", "N° Alum.", "Semana",
                    "Contenido", "Unidad", "Asignatura", "Sigla", "Semestre", "Plan", "Escuela"]
         sheet.append(headers)
         for col in sheet.columns:

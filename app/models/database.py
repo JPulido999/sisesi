@@ -17,8 +17,8 @@ def create_tables():
             CREATE TABLE IF NOT EXISTS Accion (
                 id_accion INTEGER PRIMARY KEY,
                 dia_accion VARCHAR(50),
-                horaInicio_accion VARCHAR(50),
-                horaFin_accion VARCHAR(50),
+                horaInicio_accion TIME,
+                horaFin_accion TIME,
                 ambiente_accion VARCHAR(50),
                 numAlumnos_accion INTEGER,
                 id_tipoActividad INTEGER,
@@ -85,8 +85,8 @@ def create_tables():
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS Contrato (
                 id_contrato INTEGER PRIMARY KEY,
-                periodoInicio_contrato DATETIME,
-                periodoFin_contrato DATETIME,
+                periodoInicio_contrato DATE,
+                periodoFin_contrato DATE,
                 id_docente INTEGER,
                 renacyt_contrato CHAR(18),
                 id_condicion INTEGER,
@@ -117,12 +117,11 @@ def create_tables():
                 correo_docente VARCHAR(50),
                 dni_docente VARCHAR(10),
                 celular_docente VARCHAR(15),
-                gradoMaestro_docente VARCHAR(50),
-                gradoDoctor_docente VARCHAR(50),
-                tituloProfesional_docente VARCHAR(50),
-                tituloEspMedico_docente VARCHAR(50),
-                tituloEspOdonto_docente VARCHAR(50),
-                gradoBachiller_docente VARCHAR(50)
+                gradoBachiller_docente VARCHAR(70),
+                tituloProfesional_docente VARCHAR(70),
+                gradoMaestro_docente VARCHAR(70),
+                gradoDoctor_docente VARCHAR(70),
+                tituloEspMedico_docente VARCHAR(50)
             )
         ''')
 
@@ -196,8 +195,7 @@ def create_tables():
                 nombre_semestre VARCHAR(50),
                 duracion_semestre VARCHAR(50),
                 fechaInicio_semestre DATE,
-                fechaFin_semestre DATE,
-                estado_semestre VARCHAR(50)
+                fechaFin_semestre DATE
             )
         ''')
 
@@ -207,7 +205,7 @@ def create_tables():
                 id_sil INTEGER PRIMARY KEY,
                 id_asignatura INTEGER,
                 id_semestre INTEGER,
-                rutaArchivo_sil VARCHAR(50),
+                rutaArchivo_sil VARCHAR(100),
                 FOREIGN KEY (id_asignatura) REFERENCES Asignatura(id_asignatura),
                 FOREIGN KEY (id_semestre) REFERENCES Semestre(id_semestre)
             )
@@ -342,7 +340,7 @@ def insert_basic_data(cursor):
 
     # Inserción de datos en la tabla Regimen
     regimenes = ["Tiempo Completo", "Tiempo Parcial", "Dedicación Exclusiva",
-                 "DC A1", "DC A2", "DC A3", "DC B1", "DC B2", "DC B3", "DC C1", "DC C2", "DC C3"]
+                 "DC A1", "DC A2", "DC A3", "DC B1", "DC B2", "DC B3"]
     for regimen in regimenes:
         cursor.execute(
             "SELECT id_regimen FROM Regimen WHERE nombre_regimen = ?", (regimen,))
@@ -363,27 +361,32 @@ def insert_basic_data(cursor):
                 "INSERT INTO Departamento_Academico (nombre_departamento) VALUES (?)", (departamento,))
 
     # Inserción de datos en la Semestre
-    semestres = ["2024-0", "2024-I", "2024-II"]
+    semestres = [("2024-I", "17 semanas", '2023-09-19', '2024-04-03'), ("2024-0", "8 semanas",'',''), ("2024-II", "17 semanas", '2023-06-03', '2024-11-28'), ("2025-I","17 semanas",'',''), ("2025-II", "17 semanas",'','')]
     for semestre in semestres:
         cursor.execute(
-            "SELECT id_semestre FROM Semestre WHERE nombre_semestre = ?", (semestre,))
+            "SELECT id_semestre FROM Semestre WHERE nombre_semestre = ?", (semestre[0],))
         semestre_id = cursor.fetchone()
         if not semestre_id:
+            # Reemplazar valores vacíos con NULL para fechas
+            fecha_inicio = semestre[2] if semestre[2] else None
+            fecha_fin = semestre[3] if semestre[3] else None
+            
             cursor.execute(
-                "INSERT INTO Semestre (nombre_semestre) VALUES (?)", (semestre,))
+                "INSERT INTO Semestre (nombre_semestre, duracion_semestre, fechaInicio_semestre, fechaFin_semestre) VALUES (?,?,?,?)",
+                (semestre[0], semestre[1], fecha_inicio, fecha_fin)
+            )
 
     # Definir las categorías de actividades
     categorias_actividades = [
         ("Actividades Lectivas", [
-            "Actividades de Docencia Lectiva",
-            "Actividades de Investigación Lectiva"
+            "Actividades de Docencia Lectiva"
         ]),
         ("Actividades No Lectivas", [
-            "Actividades de Proyección Social",
-            "Actividades de Investigación No Lectiva",
+            "Actividades de RSPEC",
+            "Actividades de Investigación e Innovación",
             "Actividades de Tutoría",
-            "Actividades de Docencia No Lectiva",
-            "Actividades de Gestión"
+            "Actividades de Gestión",
+            "Actividades de Docencia No Lectiva"
         ])
     ]
 
@@ -416,34 +419,32 @@ def insert_basic_data(cursor):
             ("TP", "Teoría Presencial"),
             ("PP", "Práctica Presencial"),
             ("PLP", "Práctica Laboratorio Presencial"),
-            ("PCL", "Práctica Clínica"),
-            ("PEC", "Práctica en Comunidad"),
-            ("TV", "Teoría Virtual"),
-            ("PV", "Práctica Virtual")
+            ("PCP", "Práctica Clínica Presencial"),
+            ("PCI", "Práctica en Comunidad o Institución"),
         ],
-        "Actividades de Investigación Lectiva": [
-            ("LIN", "Labores de Investigación")
+        "Actividades de RSPEC": [
+            ("ARS", "Actividad de Responsabilidad Social"),
+            ("APS", "Actividad de Proyección Social"),
+            ("AEC", "Actividad de Extensión Cultural")
         ],
-        "Actividades de Proyección Social": [
-            ("SPS", "Sesión de Proyección Social"),
-            ("APS", "Actividad de Proyección Social")
-        ],
-        "Actividades de Investigación No Lectiva": [
-            ("SII", "Sesión de Instituto de Investigación")
+        "Actividades de Investigación e Innovación": [
+            ("SIII", "Sesión de Instituto de Investigación e Innovación"),
+            ("AIN", "Actividades de Investigación")
         ],
         "Actividades de Tutoría": [
-            ("AAA", "Atención a Alumnos")
-        ],
-        "Actividades de Docencia No Lectiva": [
-            ("PCE", "Preparación de Clases y Evaluaciones")
+            ("TI", "Tutoría Individual"),
+            ("TG", "Tutoría Grupal")
         ],
         "Actividades de Gestión": [
             ("LAD", "Labores Administrativas"),
             ("SCU", "Sesión de Consejo Universitario"),
             ("SCF", "Sesión de Consejo de Facultad"),
-            ("SDP", "Sesión de Departamento"),
-            ("SEF", "Sesión de Escuela"),
+            ("SDP", "Sesión de Departamento Académico"),
+            ("SEF", "Sesión de Escuela Profesional"),
             ("CP", "Comisiones Permanentes")
+        ],
+        "Actividades de Docencia No Lectiva": [
+            ("PCE", "Preparación de Clases y Evaluaciones")
         ]
     }
 
@@ -462,7 +463,7 @@ def insert_basic_data(cursor):
                     "INSERT INTO Tipo_Actividad (id_actividad, nombre_tipoActividad, sigla_tipoActividad) VALUES (?, ?, ?)", (actividad_id, tipo[1], tipo[0]))
 
     # Inserción de datos en la tabla Tipo_Licencia
-    tipos_licencias = ["Año sabático", "Licencia por estudio"]
+    tipos_licencias = ["Licencia por año sabático", "Licencia por estudio"]
     for tipo_licencia in tipos_licencias:
         cursor.execute(
             "SELECT id_tipoLicencia FROM Tipo_Licencia WHERE nombre_tipoLicencia = ?", (tipo_licencia,))
