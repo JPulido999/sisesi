@@ -50,7 +50,7 @@ class ReporteLicenciaView(tk.Toplevel):
 
         self.licencia_tree = ttk.Treeview(
             self.tree_frame,
-            columns=("Docente", "Dni", "Celular", "Correo", "Resolucion", "FechaInicio", "FechaFin", "Observacion", "Licencia"),
+            columns=("Docente", "Dni", "Celular", "Correo", "Resolucion", "FechaInicio", "FechaFin", "Observacion", "Licencia", "Estado"),
             show="headings",
             yscrollcommand=self.tree_scroll.set
         )
@@ -61,10 +61,11 @@ class ReporteLicenciaView(tk.Toplevel):
         self.licencia_tree.heading("Celular", text="Celular")
         self.licencia_tree.heading("Correo", text="Correo")
         self.licencia_tree.heading("Resolucion", text="Resolución")
-        self.licencia_tree.heading("FechaInicio", text="Fecha Inicio")
-        self.licencia_tree.heading("FechaFin", text="Fecha Fin")
+        self.licencia_tree.heading("FechaInicio", text="F. Inicio")
+        self.licencia_tree.heading("FechaFin", text="F. Fin")
         self.licencia_tree.heading("Observacion", text="Observacion")
         self.licencia_tree.heading("Licencia", text="Licencia")
+        self.licencia_tree.heading("Estado", text="Estado")
 
         self.licencia_tree.pack(fill=tk.BOTH, expand=True)
 
@@ -78,6 +79,7 @@ class ReporteLicenciaView(tk.Toplevel):
         self.licencia_tree.column("FechaFin", width=80)
         self.licencia_tree.column("Observacion", width=150)
         self.licencia_tree.column("Licencia", width=100)
+        self.licencia_tree.column("Estado", width=40)
 
         # Actualizar lista de licencias al iniciar la ventana
         self.update_licencia_list()

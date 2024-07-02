@@ -17,8 +17,15 @@ class ReportesModel:
             
             query = """
                 SELECT d.nombres_docente, d.dni_docente, d.celular_docente, d.correo_docente,
-                    l.resolucion_licencia, l.fechaInicio_licencia, l.fechaFin_licencia, l.observacion_licencia,
-                    tl.nombre_tipoLicencia
+                    l.resolucion_licencia, l.observacion_licencia,
+                    tl.nombre_tipoLicencia,
+                    strftime('%d-%m-%Y', l.fechaInicio_licencia) AS fechaInicio_licencia, 
+                    strftime('%d-%m-%Y', l.fechaFin_licencia) AS fechaFin_licencia,
+                    CASE
+                        WHEN DATE('now') < DATE(l.fechaInicio_licencia) THEN 'No Iniciada'
+                        WHEN DATE('now') BETWEEN DATE(l.fechaInicio_licencia) AND DATE(l.fechaFin_licencia) THEN 'En Vigencia'
+                        ELSE 'Finalizada'
+                    END AS estado_licencia
                 FROM Licencia l
                 INNER JOIN Docente d ON l.id_docente = d.id_docente
                 LEFT JOIN Tipo_Licencia tl ON l.id_tipoLicencia = tl.id_tipoLicencia
@@ -34,6 +41,7 @@ class ReportesModel:
             return []
         finally:
             conn.close()
+
 
     @staticmethod
     def list_all_contratos_c1(nombreDocente, dniDocente):

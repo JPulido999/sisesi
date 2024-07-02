@@ -45,7 +45,7 @@ class ReporteAccionView(tk.Toplevel):
 
         self.accion_tree = ttk.Treeview(
             self.tree_frame,
-            columns=("Docente", "Día", "Hora Inicio", "Hora Fin", "Ambiente", "N° de Alumnos", "Semana",
+            columns=("Docente", "Día", "H. Inicio", "H. Fin", "Ambiente", "N° Alumnos", "Semana",
                      "Contenido", "Unidad", "Asignatura", "Sigla", "Semestre", "Plan", "Escuela"),
             show="headings",
             yscrollcommand=self.tree_scroll.set 
@@ -54,10 +54,10 @@ class ReporteAccionView(tk.Toplevel):
 
         self.accion_tree.heading("Docente", text="Docente")
         self.accion_tree.heading("Día", text="Día")
-        self.accion_tree.heading("Hora Inicio", text="Hora Inicio")
-        self.accion_tree.heading("Hora Fin", text="Hora Fin")
+        self.accion_tree.heading("H. Inicio", text="H. Inicio")
+        self.accion_tree.heading("H. Fin", text="H. Fin")
         self.accion_tree.heading("Ambiente", text="Ambiente")
-        self.accion_tree.heading("N° de Alumnos", text="N° de Alumnos")
+        self.accion_tree.heading("N° Alumnos", text="N° Alumnos")
         self.accion_tree.heading("Semana", text="Semana")
         self.accion_tree.heading("Contenido", text="Contenido")
         self.accion_tree.heading("Unidad", text="Unidad")
@@ -72,10 +72,10 @@ class ReporteAccionView(tk.Toplevel):
         # Ajustar tamaño de las columnas
         self.accion_tree.column("Docente", width=180)
         self.accion_tree.column("Día", width=90)
-        self.accion_tree.column("Hora Inicio", width=50)
-        self.accion_tree.column("Hora Fin", width=50)
+        self.accion_tree.column("H. Inicio", width=50)
+        self.accion_tree.column("H. Fin", width=50)
         self.accion_tree.column("Ambiente", width=50)
-        self.accion_tree.column("N° de Alumnos", width=50)
+        self.accion_tree.column("N° Alumnos", width=50)
         self.accion_tree.column("Semana", width=70)
         self.accion_tree.column("Contenido", width=200)
         self.accion_tree.column("Unidad", width=50)
@@ -120,7 +120,7 @@ class ReporteAccionView(tk.Toplevel):
         sheet.title = "Acciones"
 
         # Agregar encabezados de columna con formato
-        headers = ["Docente", "Día", "H. Inicio", "H. Fin", "Ambiente", "N° Alum.", "Semana",
+        headers = ["Docente", "Día", "H. Inicio", "H. Fin", "Ambiente", "N° Alumnos", "Semana",
                    "Contenido", "Unidad", "Asignatura", "Sigla", "Semestre", "Plan", "Escuela"]
         sheet.append(headers)
         for col in sheet.columns:
@@ -139,10 +139,10 @@ class ReporteAccionView(tk.Toplevel):
         for child in self.accion_tree.get_children():
             values = [self.accion_tree.item(child)["values"][0],  # Docente
                       self.accion_tree.item(child)["values"][1],  # Día
-                      self.accion_tree.item(child)["values"][2],  # Hora Inicio
-                      self.accion_tree.item(child)["values"][3],  # Hora Fin
+                      self.accion_tree.item(child)["values"][2],  # H. Inicio
+                      self.accion_tree.item(child)["values"][3],  # H. Fin
                       self.accion_tree.item(child)["values"][4],  # Ambiente
-                      self.accion_tree.item(child)["values"][5],  # N° de Alumnos
+                      self.accion_tree.item(child)["values"][5],  # N° Alumnos
                       self.accion_tree.item(child)["values"][6],  # Semana
                       self.accion_tree.item(child)["values"][7],  # Contenido
                       self.accion_tree.item(child)["values"][8],  # Unidad
