@@ -158,12 +158,16 @@ def create_tables():
                 FOREIGN KEY (id_tipoLicencia) REFERENCES Tipo_Licencia(id_tipoLicencia)
             )
             ''')
-        
+
         # Crear la tabla Plan_Estudios
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS Plan_Estudios (
                 id_plan INTEGER PRIMARY KEY,
-                nombre_plan VARCHAR(50),
+                denominacion_plan VARCHAR(50),
+                resolucion_plan VARCHAR (50),
+                fecha_plan DATE,
+                enfoque_plan VARCHAR(50),
+                observacion_plan TEXT,
                 id_escuela INTEGER,
                 FOREIGN KEY (id_escuela) REFERENCES Escuela(id_escuela)
             )
@@ -262,7 +266,10 @@ def insert_basic_data(cursor):
         ("Ciencias de la Educación", "C. de la Educación", "Educación Física"),
         ("Ciencias de la Educación", "C. de la Educación", "Educación Inicial"),
         ("Ciencias de la Educación", "C. de la Educación", "Educación Primaria"),
-        ("Ciencias de la Educación", "C. de la Educación", "Educación Secundaria"),
+        ("Ciencias de la Educación", "C. de la Educación", "Educación Secundaria - Ciencias Sociales y Filosofía con mención en Turismo"),
+        ("Ciencias de la Educación", "C. de la Educación", "Educación Secundaria - Inglés y Lengua Española"),
+        ("Ciencias de la Educación", "C. de la Educación", "Educación Secundaria - Matemática Física y Informática"),
+        ("Ciencias de la Educación", "C. de la Educación", "Educación Secundaria - Lengua Española y Literatura con mención en Comunicación"),
         ("Ciencias de la Salud", "C. de la Salud", "Enfermería"),
         ("Ciencias de la Salud", "C. de la Salud", "Farmacia y Bioquímica"),
         ("Ciencias de la Salud", "C. de la Salud", "Medicina Humana"),
@@ -317,6 +324,139 @@ def insert_basic_data(cursor):
         else:
             escuela_id = escuela_id[0]
 
+    # Inserciones básicas: Datos de las facultades y escuelas
+    escuelas_planes = {
+        "Agronomía": [
+            ('2015-08-24', "Nº 401-2015-UNSCH-CU", "Currículo 2004 revisado - Agronomía", "Objetivos", 
+            "No figura DEPART. ACADEMICO/ No figura HL (HP y HL están unidos en HP, además la suma de horas figura como 12, debe ser 13)/En el curso LE141, TH registra 4 debe ser 5 / Cursos de ACTIVIDADES CO CURRICULARES difieren en los cursos que no suman créditos. / En ÁREA ACADÉMICA DE HIDROLOGÍA agrega el curso SU556 Manejo de cuencas, en la Resolución no figura / (CURRÍCULO ENVIADO POR LA EPA NO ES EL ACTUALIZADO)")
+        ],
+        "Ingeniería Agrícola": [
+            ('2016-07-22', "455-2016-UNSCH-CU", "Currículo 2004 Revisado - Agrícola", "Objetivos", "Ninguna")
+        ],
+        "Ingeniería Agroforestal": [
+            ('2015-08-24', "Nº 402-2015-UNSCH-CU", "Currículo 2009 revisado - Agronomía", "Objetivos", "Ninguna")
+        ],
+        "Medicina Veterinaria": [
+            ('2016-02-23', "121-2016-UNSCH-R", "Currículo 2004 Revisado - Veterinaria", "Objetivos", "Ninguna")
+        ],
+        "Educación Inicial": [
+            ('2015-09-21', "N° 532-2015-UNSCH-CU", "Currículo 2004 - revisado - Inicial", "Objetivos", "Ninguna")
+        ],
+        "Educación Primaria": [
+            ('2016-06-30', "RCU N° 379-2016-UNSCH-CU", "Currículo 2004 Reajustado revisado - Primaria", "Objetivos", "Ninguna")
+        ],
+        "Educación Secundaria - Ciencias Sociales y Filosofía con mención en Turismo": [
+            ('', "", "Revisado 2004 - Turismo", "Objetivos", "Ninguna")
+        ],
+        "Educación Secundaria - Inglés y Lengua Española": [
+            ('', "", "Revisado 2004 - Inglés", "Objetivos", "Ninguna")
+        ],
+        "Educación Secundaria - Matemática Física y Informática": [
+            ('2020-02-12', "153-2020-UNSCH-R", "Currículo 2004 - Reajustado y Adecuado a la Ley 30220 - Matemática", "Competencias", 
+            "Incongruente, el currículo que maneja la OGA es distinto a los que se encuentran en la Secretaría General.")
+        ],
+        "Educación Secundaria - Lengua Española y Literatura con mención en Comunicación": [
+            ('2020-02-12', "153-2020-UNSCH-R", "Currículo 2004 - Adecuado a la Ley 30220 - Comunicación", "Competencias", 
+            "Incongruente, el currículo que maneja la OGA es distinto a los que se encuentran en la Secretaría General.")
+        ],
+        "Educación Física": [
+            ('2015-09-21', "533-2015-UNSCH-CU", "Currículo 2004 - Revisado - Física", "Objetivos", "Ninguna")
+        ],
+        "Administración de Empresas": [
+            ('', "", "Currículo 2004 - Administración", "Objetivos", "Ninguna")
+        ],
+        "Contabilidad y Auditoría": [
+            ('2016-01-12', "N° 055-2016-UNSCH-CU", "Currículo 2004 - Revisado - Contabilidad", "Objetivos", "Ninguna")
+        ],
+        "Economía": [
+            ('2016-01-14', "N° 067-2016-UNSCH-CU", "Currículo 2004 - Revisado - Economía", "Objetivos", "Ninguna")
+        ],
+        "Antropología Social": [
+            ('2016-01-27', "N° 056-2016-UNSCH-R", "Currículo 2004- Revisado - Antropología", "Objetivos", "Ninguna")
+        ],
+        "Ciencias de la Comunicación": [
+            ('2016-07-11', "393-2016-UNSCH-CU", "Currículo estudios 2004 Revisado - Comunicación", "Objetivos", 
+            "En el curso PRACTICA PREPROFESIONAL la sigla figura como PPCC-542, debe ser PP-542")
+        ],
+        "Trabajo Social": [
+            ('2016-02-23', "120-2016-UNSCH-R", "CURRÍCULO 2004 - Revisado - Trabajo Social", "Objetivos", "Falta consignar la malla curricular en DIGITAL")
+        ],
+        "Arqueología e Historia": [
+            ('2011-07-18', "N° 550-2011-UNSCH-CU", "Currículo 2004- Reajustado - Arqueología", "Objetivos", "Ninguna")
+        ],
+        "Derecho": [
+            ('2016-01-12', "N° 057-2016-UNSCH-CU", "Currículo 2004 - Revisado - Derecho", "Objetivos", "Ninguna")
+        ],
+        "Ingeniería de Minas": [
+            ('2016-07-22', "453-2016-UNSCH-CU", "Currículo 2004 Revisado - Minas", "Objetivos", "Ninguna")
+        ],
+        "Ingeniería Civil": [
+            ('2016-08-10', "N° 473-2016-UNSCH-CU", "Currículo 2004 - Revisado - Civil", "Objetivos", 
+            "No coincide el contenido (índice) en lo físico y digital. En el digital no se encuentra la malla curricular. Y algunos puntos donde especifica la revisión no coincide con el currículo DIGITAL entregado por la escuela.")
+        ],
+        "Ingeniería de Sistemas": [
+            ('2016-07-22', "456-2016-UNSCH-CU", "Currículo de estudios 2005 Revisado - Sistemas", "Objetivos", "Ninguna")
+        ],
+        "Ciencias Físico-Matemáticas": [
+            ('2019-02-28', "236-2019-UNSCH-R", "CURRÍCULO 1998 Matemáticas-Reajustado - Físico-Matemáticas", "Objetivos", "Ninguna")
+        ],
+        "Ingeniería Química": [
+            ('2020-07-30', "N° 249-2020-UNSCH-CU", "Currículo 2004 - Revisado - Química", "Competencias", "Ninguna")
+        ],
+        "Ingeniería en Industrias Alimentarias": [
+            ('2015-11-03', "N° 670-2015-UNSCH-CU", "Currículo 2004 - Revisado - Alimentarias", "Objetivos", 
+            "No coincide el contenido (índice) y no registra el cuadro de Departamento académico en cada semestre. La malla curricular está elaborada con diferentes formatos.")
+        ],
+        "Ingeniería Agroindustrial": [
+            ('2016-01-20', "Nº 102-2016-UNSCH-CU", "Currículo 2004 - Reajustado - Agroindustrial", "Objetivos", 
+            "No figura en DIGITAL la malla curricular / El cuadro de equivalencias de la escuela NO figura en el currículo FISICO")
+        ],
+        "Enfermería": [
+            ('2015-08-24', "Nº 403-2015-UNSCH-CU", "Currículo 2004 - Revisado - Enfermería", "Competencias", "Ninguna")
+        ],
+        "Obstetricia": [
+            ('2019-02-06', "N° 157-2019-UNSCH-R", "Currículo 2004 - Actualizado - Obstetricia", "Competencias", 
+            "Incongruente, el currículo que maneja la OGA es CURRÍCULO 2004 REAJUSTADO, debe ser CURRÍCULO 2004 ACTUALIZADO, según resolución aprobado el 06/02/2019.")
+        ],
+        "Farmacia y Bioquímica": [
+            ('2016-01-12', "Nº 056-2016-UNSCH-CU", "Currículo 2004 - Revisado - Farmacia", "Objetivos", 
+            "No figura los departamentos académicos en la Distribución de asignaturas, en el currículo que nos facilitó la escuela.")
+        ],
+        "Medicina Humana": [
+            ('2020-05-19', "171-2020-UNSCH-CU", "Currículo 2012 - Reajustado - Medicina", "Competencias", "Ninguna")
+        ],
+        "Biología": [
+            ('2016-07-22', "N° 454-2016-UNSCH-CU", "Currículo 2004 - Revisado - Biología", "Objetivos", "Ninguna")
+        ]
+    }
+
+    for escuelax, planes in escuelas_planes.items():
+        try:
+            cursor.execute("SELECT id_escuela FROM Escuela WHERE nombre_escuela = ?", (escuelax,))
+            escuelax_id = cursor.fetchone()
+
+            if escuelax_id:
+                escuelax_id = escuelax_id[0]
+            else:
+                # Manejar el caso en que la escuela no se encuentra
+                print(f"Escuela '{escuelax}' no encontrada.")
+                continue
+
+            for plan in planes:
+                cursor.execute("SELECT id_plan FROM Plan_Estudios WHERE denominacion_plan = ?", (plan[2],))
+                plan_id = cursor.fetchone()
+
+                if not plan_id:
+                    cursor.execute(
+                        "INSERT INTO Plan_Estudios (fecha_plan, resolucion_plan, denominacion_plan, enfoque_plan, observacion_plan, id_escuela) VALUES (?, ?, ?, ?, ?, ?)",
+                        (plan[0], plan[1], plan[2], plan[3], plan[4], escuelax_id)
+                    )
+                    print(f"Plan '{plan[2]}' insertado para la escuela '{escuelax}'.")
+                else:
+                    print(f"Plan '{plan[2]}' ya existe para la escuela '{escuelax}'.")
+        except sqlite3.Error as e:
+            print(f"Error al procesar la escuela '{escuelax}': {e}")
+
     # Inserción de datos en la tabla Condicion
     condiciones = ["NOMBRADO", "CONTRATADO"]
     for condicion in condiciones:
@@ -361,7 +501,7 @@ def insert_basic_data(cursor):
                 "INSERT INTO Departamento_Academico (nombre_departamento) VALUES (?)", (departamento,))
 
     # Inserción de datos en la Semestre
-    semestres = [("2024-I", "17 semanas", '2023-09-19', '2024-04-03'), ("2024-0", "8 semanas",'',''), ("2024-II", "17 semanas", '2023-06-03', '2024-11-28'), ("2025-I","17 semanas",'',''), ("2025-II", "17 semanas",'','')]
+    semestres = [("2024-I", "17 semanas", '2023-09-19', '2024-04-03'), ("2024-0", "8 semanas", '', ''), ("2024-II", "17 semanas", '2023-06-03', '2024-11-28'), ("2025-I", "17 semanas", '', ''), ("2025-II", "17 semanas", '', '')]
     for semestre in semestres:
         cursor.execute(
             "SELECT id_semestre FROM Semestre WHERE nombre_semestre = ?", (semestre[0],))
@@ -370,7 +510,7 @@ def insert_basic_data(cursor):
             # Reemplazar valores vacíos con NULL para fechas
             fecha_inicio = semestre[2] if semestre[2] else None
             fecha_fin = semestre[3] if semestre[3] else None
-            
+
             cursor.execute(
                 "INSERT INTO Semestre (nombre_semestre, duracion_semestre, fechaInicio_semestre, fechaFin_semestre) VALUES (?,?,?,?)",
                 (semestre[0], semestre[1], fecha_inicio, fecha_fin)
@@ -471,8 +611,6 @@ def insert_basic_data(cursor):
         if not semestre_id:
             cursor.execute(
                 "INSERT INTO Tipo_Licencia (nombre_tipoLicencia) VALUES (?)", (tipo_licencia,))
-            
+
     # Asegurarse de que los cambios se guarden en la base de datos
     cursor.connection.commit()
-
-
