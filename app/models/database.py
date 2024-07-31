@@ -263,6 +263,9 @@ def insert_basic_data(cursor):
         ("Ciencias Agrarias", "C. Agrarias", "Ingeniería Agroforestal"),
         ("Ciencias Agrarias", "C. Agrarias", "Medicina Veterinaria"),
         ("Ciencias Biológicas", "C. Biológicas", "Biología"),
+        ("Ciencias Biológicas", "C. Biológicas", "Biología - Microbiología"),
+        ("Ciencias Biológicas", "C. Biológicas", "Biología - Biotecnología"),
+        ("Ciencias Biológicas", "C. Biológicas", "Biología - Ecología y Recursos Naturales"),
         ("Ciencias de la Educación", "C. de la Educación", "Educación Física"),
         ("Ciencias de la Educación", "C. de la Educación", "Educación Inicial"),
         ("Ciencias de la Educación", "C. de la Educación", "Educación Primaria"),
@@ -274,27 +277,26 @@ def insert_basic_data(cursor):
         ("Ciencias de la Salud", "C. de la Salud", "Farmacia y Bioquímica"),
         ("Ciencias de la Salud", "C. de la Salud", "Medicina Humana"),
         ("Ciencias de la Salud", "C. de la Salud", "Obstetricia"),
-        ("Ciencias Económicas, Administrativas y Contables",
-         "FACEAC", "Administración de Empresas"),
-        ("Ciencias Económicas, Administrativas y Contables",
-         "FACEAC", "Contabilidad y Auditoría"),
+        ("Ciencias Económicas, Administrativas y Contables", "FACEAC", "Administración de Empresas"),
+        ("Ciencias Económicas, Administrativas y Contables", "FACEAC", "Contabilidad y Auditoría"),
         ("Ciencias Económicas, Administrativas y Contables", "FACEAC", "Economía"),
         ("Ciencias Sociales", "C. Sociales", "Antropología Social"),
         ("Ciencias Sociales", "C. Sociales", "Arqueología e Historia"),
+        ("Ciencias Sociales", "C. Sociales", "Arqueología e Historia - Arqueología"),
+        ("Ciencias Sociales", "C. Sociales", "Arqueología e Historia - Historia"),
         ("Ciencias Sociales", "C. Sociales", "Ciencias de la Comunicación"),
         ("Ciencias Sociales", "C. Sociales", "Trabajo Social"),
         ("Derecho y Ciencias Políticas", "Derecho", "Derecho"),
-        ("Ingeniería de Minas, Geología y Civil",
-         "FIMGC", "Ciencias Físico-Matemáticas"),
+        ("Ingeniería de Minas, Geología y Civil", "FIMGC", "Ciencias Físico-Matemáticas"),
+        ("Ingeniería de Minas, Geología y Civil", "FIMGC", "Ciencias Físico-Matemáticas - Matemática"),
+        ("Ingeniería de Minas, Geología y Civil", "FIMGC", "Ciencias Físico-Matemáticas - Física"),
+        ("Ingeniería de Minas, Geología y Civil", "FIMGC", "Ciencias Físico-Matemáticas - Estadística"),
         ("Ingeniería de Minas, Geología y Civil", "FIMGC", "Ingeniería Civil"),
         ("Ingeniería de Minas, Geología y Civil", "FIMGC", "Ingeniería de Minas"),
-        ("Ingeniería de Minas, Geología y Civil",
-         "FIMGC", "Ingeniería de Sistemas"),
-        ("Ingeniería de Minas, Geología y Civil",
-         "FIMGC", "Ingeniería Informática"),
+        ("Ingeniería de Minas, Geología y Civil", "FIMGC", "Ingeniería de Sistemas"),
+        ("Ingeniería de Minas, Geología y Civil", "FIMGC", "Ingeniería Informática"),
         ("Ingeniería Química y Metalurgia", "FIQM", "Ingeniería Agroindustrial"),
-        ("Ingeniería Química y Metalurgia", "FIQM",
-         "Ingeniería en Industrias Alimentarias"),
+        ("Ingeniería Química y Metalurgia", "FIQM", "Ingeniería en Industrias Alimentarias"),
         ("Ingeniería Química y Metalurgia", "FIQM", "Ingeniería Química")
     ]
 
@@ -328,107 +330,159 @@ def insert_basic_data(cursor):
     escuelas_planes = {
         "Agronomía": [
             ('2015-08-24', "Nº 401-2015-UNSCH-CU", "Currículo 2004 revisado - Agronomía", "Objetivos", 
-            "No figura DEPART. ACADEMICO/ No figura HL (HP y HL están unidos en HP, además la suma de horas figura como 12, debe ser 13)/En el curso LE141, TH registra 4 debe ser 5 / Cursos de ACTIVIDADES CO CURRICULARES difieren en los cursos que no suman créditos. / En ÁREA ACADÉMICA DE HIDROLOGÍA agrega el curso SU556 Manejo de cuencas, en la Resolución no figura / (CURRÍCULO ENVIADO POR LA EPA NO ES EL ACTUALIZADO)")
+            "No figura DEPART. ACADEMICO/ No figura HL (HP y HL están unidos en HP, además la suma de horas figura como 12, debe ser 13)/En el curso LE141, TH registra 4 debe ser 5 / Cursos de ACTIVIDADES CO CURRICULARES difieren en los cursos que no suman créditos. / En ÁREA ACADÉMICA DE HIDROLOGÍA agrega el curso SU556 Manejo de cuencas, en la Resolución no figura / (CURRÍCULO ENVIADO POR LA EPA NO ES EL ACTUALIZADO)"),
+            ('', "", "CURRÍCULO-2018 - Agronomía", "","") 
         ],
         "Ingeniería Agrícola": [
-            ('2016-07-22', "455-2016-UNSCH-CU", "Currículo 2004 Revisado - Agrícola", "Objetivos", "Ninguna")
+            ('2016-07-22', "455-2016-UNSCH-CU", "Currículo 2004 Revisado - Agrícola", "Objetivos", "Ninguna"),
+            ('', "", "CURRÍCULO 2018 - Agrícola", "","")
         ],
         "Ingeniería Agroforestal": [
-            ('2015-08-24', "Nº 402-2015-UNSCH-CU", "Currículo 2009 revisado - Agronomía", "Objetivos", "Ninguna")
+            ('2015-08-24', "Nº 402-2015-UNSCH-CU", "Currículo 2009 revisado - Agroforestal", "Objetivos", "Ninguna"),
+            ('', "", "CURRÍCULO 2018 - Agroforestal", "","")
         ],
         "Medicina Veterinaria": [
-            ('2016-02-23', "121-2016-UNSCH-R", "Currículo 2004 Revisado - Veterinaria", "Objetivos", "Ninguna")
+            ('2016-02-23', "121-2016-UNSCH-R", "Currículo 2004 Revisado - Veterinaria", "Objetivos", "Ninguna"),
+            ('', "", "CURRÍCULO 2018 - Veterinaria", "","")
         ],
         "Educación Inicial": [
-            ('2015-09-21', "N° 532-2015-UNSCH-CU", "Currículo 2004 - revisado - Inicial", "Objetivos", "Ninguna")
+            ('2015-09-21', "N° 532-2015-UNSCH-CU", "Currículo 2004 - revisado - Inicial", "Objetivos", "Ninguna"),
+            ('', "", "CURRÍCULO 2018 - Inicial", "","")
         ],
         "Educación Primaria": [
-            ('2016-06-30', "RCU N° 379-2016-UNSCH-CU", "Currículo 2004 Reajustado revisado - Primaria", "Objetivos", "Ninguna")
+            ('2016-06-30', "RCU N° 379-2016-UNSCH-CU", "Currículo 2004 Reajustado revisado - Primaria", "Objetivos", "Ninguna"),
+            ('', "", "CURRÍCULO 2018 - Primaria", "","")
         ],
         "Educación Secundaria - Ciencias Sociales y Filosofía con mención en Turismo": [
-            ('', "", "Revisado 2004 - Turismo", "Objetivos", "Ninguna")
+            ('', "", "Revisado 2004 - Turismo", "Objetivos", "Ninguna"),
+            ('', "", "CURRÍCULO 2018 - Turismo", "","")
         ],
         "Educación Secundaria - Inglés y Lengua Española": [
-            ('', "", "Revisado 2004 - Inglés", "Objetivos", "Ninguna")
+            ('', "", "Revisado 2004 - Inglés", "Objetivos", "Ninguna"),
+            ('', "", "CURRÍCULO 2018 - Inglés", "","")
         ],
         "Educación Secundaria - Matemática Física y Informática": [
-            ('2020-02-12', "153-2020-UNSCH-R", "Currículo 2004 - Reajustado y Adecuado a la Ley 30220 - Matemática", "Competencias", 
-            "Incongruente, el currículo que maneja la OGA es distinto a los que se encuentran en la Secretaría General.")
+            ('2020-02-12', "153-2020-UNSCH-R", "Currículo 2004 - Reajustado y Adecuado a la Ley 30220 - Matemática (ES)", "Competencias", 
+            "Incongruente, el currículo que maneja la OGA es distinto a los que se encuentran en la Secretaría General."),
+            ('', "", "CURRÍCULO 2018 - Matemática (ES)", "","")
         ],
         "Educación Secundaria - Lengua Española y Literatura con mención en Comunicación": [
-            ('2020-02-12', "153-2020-UNSCH-R", "Currículo 2004 - Adecuado a la Ley 30220 - Comunicación", "Competencias", 
-            "Incongruente, el currículo que maneja la OGA es distinto a los que se encuentran en la Secretaría General.")
+            ('2020-02-12', "153-2020-UNSCH-R", "Currículo 2004 - Adecuado a la Ley 30220 - Lengua y Literatura", "Competencias", 
+            "Incongruente, el currículo que maneja la OGA es distinto a los que se encuentran en la Secretaría General."),
+            ('', "", "CURRÍCULO 2018 - Lengua y Literatura", "", "")
         ],
         "Educación Física": [
-            ('2015-09-21', "533-2015-UNSCH-CU", "Currículo 2004 - Revisado - Física", "Objetivos", "Ninguna")
+            ('2015-09-21', "533-2015-UNSCH-CU", "Currículo 2004 - Revisado - Ed. Física", "Objetivos", "Ninguna"),
+            ('', "", "CURRÍCULO 2018 - Ed. Física", "","")
         ],
         "Administración de Empresas": [
-            ('', "", "Currículo 2004 - Administración", "Objetivos", "Ninguna")
+            ('', "", "Currículo 2004 - Administración", "Objetivos", "Ninguna"),
+            ('', "", "CURRÍCULO 2018 - Administración", "","")
         ],
         "Contabilidad y Auditoría": [
-            ('2016-01-12', "N° 055-2016-UNSCH-CU", "Currículo 2004 - Revisado - Contabilidad", "Objetivos", "Ninguna")
+            ('2016-01-12', "N° 055-2016-UNSCH-CU", "Currículo 2004 - Revisado - Contabilidad", "Objetivos", "Ninguna"),
+            ('', "", "CURRÍCULO 2018 - Contabilidad", "","")
         ],
         "Economía": [
-            ('2016-01-14', "N° 067-2016-UNSCH-CU", "Currículo 2004 - Revisado - Economía", "Objetivos", "Ninguna")
+            ('2016-01-14', "N° 067-2016-UNSCH-CU", "Currículo 2004 - Revisado - Economía", "Objetivos", "Ninguna"),
+            ('', "", "CURRÍCULO 2018 - Economía", "","")
         ],
         "Antropología Social": [
-            ('2016-01-27', "N° 056-2016-UNSCH-R", "Currículo 2004- Revisado - Antropología", "Objetivos", "Ninguna")
+            ('2016-01-27', "N° 056-2016-UNSCH-R", "Currículo 2004- Revisado - Antropología", "Objetivos", "Ninguna"),
+            ('', "", "CURRÍCULO 2018 - Antropología", "","")
         ],
         "Ciencias de la Comunicación": [
             ('2016-07-11', "393-2016-UNSCH-CU", "Currículo estudios 2004 Revisado - Comunicación", "Objetivos", 
-            "En el curso PRACTICA PREPROFESIONAL la sigla figura como PPCC-542, debe ser PP-542")
+            "En el curso PRACTICA PREPROFESIONAL la sigla figura como PPCC-542, debe ser PP-542"),
+            ('', "", "CURRÍCULO 2018 - Comunicación", "","")
         ],
         "Trabajo Social": [
-            ('2016-02-23', "120-2016-UNSCH-R", "CURRÍCULO 2004 - Revisado - Trabajo Social", "Objetivos", "Falta consignar la malla curricular en DIGITAL")
+            ('2016-02-23', "120-2016-UNSCH-R", "CURRÍCULO 2004 - Revisado - Trabajo Social", "Objetivos", "Falta consignar la malla curricular en DIGITAL"),
+            ('', "", "CURRÍCULO 2018 - Trabajo Social", "","")
         ],
         "Arqueología e Historia": [
-            ('2011-07-18', "N° 550-2011-UNSCH-CU", "Currículo 2004- Reajustado - Arqueología", "Objetivos", "Ninguna")
+            ('2011-07-18', "N° 550-2011-UNSCH-CU", "Currículo 2004- Reajustado - Arqueología", "Objetivos", "Ninguna"),
+        ],
+        "Arqueología e Historia - Arqueología": [
+            ('', "", "CURRÍCULO 2018 - Arqueología", "","")
+        ],
+        "Arqueología e Historia - Historia": [
+            ('', "", "CURRÍCULO 2018 - Historia", "","")
         ],
         "Derecho": [
-            ('2016-01-12', "N° 057-2016-UNSCH-CU", "Currículo 2004 - Revisado - Derecho", "Objetivos", "Ninguna")
+            ('2016-01-12', "N° 057-2016-UNSCH-CU", "Currículo 2004 - Revisado - Derecho", "Objetivos", "Ninguna"),
+            ('', "", "CURRÍCULO 2018 - Derecho", "","")
         ],
         "Ingeniería de Minas": [
-            ('2016-07-22', "453-2016-UNSCH-CU", "Currículo 2004 Revisado - Minas", "Objetivos", "Ninguna")
+            ('2016-07-22', "453-2016-UNSCH-CU", "Currículo 2004 Revisado - Minas", "Objetivos", "Ninguna"),
+            ('', "", "CURRÍCULO 2018 - Minas", "","")
         ],
         "Ingeniería Civil": [
             ('2016-08-10', "N° 473-2016-UNSCH-CU", "Currículo 2004 - Revisado - Civil", "Objetivos", 
-            "No coincide el contenido (índice) en lo físico y digital. En el digital no se encuentra la malla curricular. Y algunos puntos donde especifica la revisión no coincide con el currículo DIGITAL entregado por la escuela.")
+            "No coincide el contenido (índice) en lo físico y digital. En el digital no se encuentra la malla curricular. Y algunos puntos donde especifica la revisión no coincide con el currículo DIGITAL entregado por la escuela."),
+            ('', "", "CURRÍCULO 2018 - Civil", "","")
         ],
         "Ingeniería de Sistemas": [
-            ('2016-07-22', "456-2016-UNSCH-CU", "Currículo de estudios 2005 Revisado - Sistemas", "Objetivos", "Ninguna")
+            ('2016-07-22', "456-2016-UNSCH-CU", "Currículo de estudios 2005 Revisado - Sistemas", "Objetivos", "Ninguna"),
+            ('', "", "CURRÍCULO 2018 - Sistemas", "","")
         ],
         "Ciencias Físico-Matemáticas": [
             ('2019-02-28', "236-2019-UNSCH-R", "CURRÍCULO 1998 Matemáticas-Reajustado - Físico-Matemáticas", "Objetivos", "Ninguna")
         ],
+        "Ciencias Físico-Matemáticas - Matemática": [
+            ('', "", "CURRÍCULO 2018 - Matemática", "", "")
+        ],
+        "Ciencias Físico-Matemáticas - Física": [
+            ('', "", "CURRÍCULO 2018 - Física", "", "")
+        ],
+        "Ciencias Físico-Matemáticas - Estadística": [
+            ('', "", "CURRÍCULO 2018 - Estadística", "", "")
+        ],
         "Ingeniería Química": [
-            ('2020-07-30', "N° 249-2020-UNSCH-CU", "Currículo 2004 - Revisado - Química", "Competencias", "Ninguna")
+            ('2020-07-30', "N° 249-2020-UNSCH-CU", "Currículo 2004 - Revisado - Química", "Competencias", "Ninguna"),
+            ('', "", "CURRÍCULO 2018 - Química", "","")
         ],
         "Ingeniería en Industrias Alimentarias": [
             ('2015-11-03', "N° 670-2015-UNSCH-CU", "Currículo 2004 - Revisado - Alimentarias", "Objetivos", 
-            "No coincide el contenido (índice) y no registra el cuadro de Departamento académico en cada semestre. La malla curricular está elaborada con diferentes formatos.")
+            "No coincide el contenido (índice) y no registra el cuadro de Departamento académico en cada semestre. La malla curricular está elaborada con diferentes formatos."),
+            ('', "", "CURRÍCULO 2018 - Alimentarias", "","")
         ],
         "Ingeniería Agroindustrial": [
             ('2016-01-20', "Nº 102-2016-UNSCH-CU", "Currículo 2004 - Reajustado - Agroindustrial", "Objetivos", 
-            "No figura en DIGITAL la malla curricular / El cuadro de equivalencias de la escuela NO figura en el currículo FISICO")
+            "No figura en DIGITAL la malla curricular / El cuadro de equivalencias de la escuela NO figura en el currículo FISICO"),
+            ('', "", "CURRÍCULO 2018 - Agroindustrial", "","")
         ],
         "Enfermería": [
-            ('2015-08-24', "Nº 403-2015-UNSCH-CU", "Currículo 2004 - Revisado - Enfermería", "Competencias", "Ninguna")
+            ('2015-08-24', "Nº 403-2015-UNSCH-CU", "Currículo 2004 - Revisado - Enfermería", "Competencias", "Ninguna"),
+            ('', "", "CURRÍCULO 2018 - Enfermería", "","")
         ],
         "Obstetricia": [
             ('2019-02-06', "N° 157-2019-UNSCH-R", "Currículo 2004 - Actualizado - Obstetricia", "Competencias", 
-            "Incongruente, el currículo que maneja la OGA es CURRÍCULO 2004 REAJUSTADO, debe ser CURRÍCULO 2004 ACTUALIZADO, según resolución aprobado el 06/02/2019.")
+            "Incongruente, el currículo que maneja la OGA es CURRÍCULO 2004 REAJUSTADO, debe ser CURRÍCULO 2004 ACTUALIZADO, según resolución aprobado el 06/02/2019."),
+            ('', "", "CURRÍCULO 2018 - Obstetricia", "","")
         ],
         "Farmacia y Bioquímica": [
             ('2016-01-12', "Nº 056-2016-UNSCH-CU", "Currículo 2004 - Revisado - Farmacia", "Objetivos", 
-            "No figura los departamentos académicos en la Distribución de asignaturas, en el currículo que nos facilitó la escuela.")
+            "No figura los departamentos académicos en la Distribución de asignaturas, en el currículo que nos facilitó la escuela."),
+            ('', "", "CURRÍCULO 2018 - Farmacia", "","")
         ],
         "Medicina Humana": [
-            ('2020-05-19', "171-2020-UNSCH-CU", "Currículo 2012 - Reajustado - Medicina", "Competencias", "Ninguna")
+            ('2020-05-19', "171-2020-UNSCH-CU", "Currículo 2012 - Reajustado - Medicina", "Competencias", "Ninguna"),
+            ('', "", "CURRÍCULO 2018 - Medicina", "","")
         ],
         "Biología": [
             ('2016-07-22', "N° 454-2016-UNSCH-CU", "Currículo 2004 - Revisado - Biología", "Objetivos", "Ninguna")
+        ],
+        "Biología - Microbiología": [
+            ('', "", "CURRÍCULO 2018 - Microbiología", "","")
+        ],
+        "Biología - Biotecnología": [
+            ('', "", "CURRÍCULO 2018 - Biotecnología", "","")
+        ],
+        "Biología - Ecología y Recursos Naturales": [
+            ('', "", "CURRÍCULO 2018 - Ecología", "","")
         ]
-    }
+    } 
 
     for escuelax, planes in escuelas_planes.items():
         try:
