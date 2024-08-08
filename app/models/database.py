@@ -22,10 +22,10 @@ def create_tables():
                 ambiente_accion VARCHAR(50),
                 numAlumnos_accion INTEGER,
                 id_tipoActividad INTEGER,
-                id_semana INTEGER,
+                id_asignatura INTEGER,
                 id_docente INTEGER,
                 FOREIGN KEY (id_tipoActividad) REFERENCES Tipo_Actividad(id_tipoActividad),
-                FOREIGN KEY (id_semana) REFERENCES Semana(id_semana),
+                FOREIGN KEY (id_asignatura) REFERENCES Asignatura(id_asignatura),
                 FOREIGN KEY (id_docente) REFERENCES Docente(id_docente)
             )
         ''')
@@ -58,6 +58,7 @@ def create_tables():
                 horasTs_asignatura INTEGER,
                 horasPs_asignatura INTEGER,
                 horasLs_asignatura INTEGER,
+                ciclo_asignatura VARCHAR(10),
                 id_plan INTEGER,
                 id_departamento INTEGER,
                 FOREIGN KEY (id_plan) REFERENCES Plan_Estudios(id_plan),
@@ -114,6 +115,8 @@ def create_tables():
                 nombres_docente VARCHAR(50),
                 apellidoPaterno_docente VARCHAR(50),
                 apellidoMaterno_docente VARCHAR(50),
+                genero_docente VARCHAR(15),
+                pais_docente VARCHAR(50),
                 correo_docente VARCHAR(50),
                 dni_docente VARCHAR(10),
                 celular_docente VARCHAR(15),
@@ -130,6 +133,7 @@ def create_tables():
             CREATE TABLE IF NOT EXISTS Escuela (
                 id_escuela INTEGER PRIMARY KEY,
                 nombre_escuela VARCHAR(50),
+                codigo_escuela VARCHAR(5),
                 id_facultad INTEGER,
                 FOREIGN KEY (id_facultad) REFERENCES Facultad(id_facultad)
             )
@@ -168,6 +172,7 @@ def create_tables():
                 fecha_plan DATE,
                 enfoque_plan VARCHAR(50),
                 observacion_plan TEXT,
+                rutaArchivo_plan VARCHAR(100),
                 id_escuela INTEGER,
                 FOREIGN KEY (id_escuela) REFERENCES Escuela(id_escuela)
             )
@@ -178,17 +183,6 @@ def create_tables():
             CREATE TABLE IF NOT EXISTS Regimen (
                 id_regimen INTEGER PRIMARY KEY,
                 nombre_regimen VARCHAR(50)
-            )
-        ''')
-
-        # Crear la tabla Semana
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS Semana (
-                id_semana INTEGER PRIMARY KEY,
-                nombre_semana VARCHAR(50),
-                contenido_semana TEXT,
-                id_unidad INTEGER,
-                FOREIGN KEY (id_unidad) REFERENCES Unidad(id_unidad)
             )
         ''')
 
@@ -234,16 +228,6 @@ def create_tables():
             )
             ''')
 
-        # Crear la tabla Unidad
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS Unidad (
-                id_unidad INTEGER PRIMARY KEY,
-                numero_unidad VARCHAR(50),
-                id_sil INTEGER,
-                FOREIGN KEY (id_sil) REFERENCES Silabo(id_sil)
-            )
-        ''')
-
         # Llamada a la función para insertar datos básicos
         insert_basic_data(cursor)
 
@@ -258,50 +242,53 @@ def create_tables():
 def insert_basic_data(cursor):
     # Inserciones básicas: Datos de las facultades y escuelas
     facultades_escuelas = [
-        ("Ciencias Agrarias", "C. Agrarias", "Agronomía"),
-        ("Ciencias Agrarias", "C. Agrarias", "Ingeniería Agrícola"),
-        ("Ciencias Agrarias", "C. Agrarias", "Ingeniería Agroforestal"),
-        ("Ciencias Agrarias", "C. Agrarias", "Medicina Veterinaria"),
-        ("Ciencias Biológicas", "C. Biológicas", "Biología"),
-        ("Ciencias Biológicas", "C. Biológicas", "Biología - Microbiología"),
-        ("Ciencias Biológicas", "C. Biológicas", "Biología - Biotecnología"),
-        ("Ciencias Biológicas", "C. Biológicas", "Biología - Ecología y Recursos Naturales"),
-        ("Ciencias de la Educación", "C. de la Educación", "Educación Física"),
-        ("Ciencias de la Educación", "C. de la Educación", "Educación Inicial"),
-        ("Ciencias de la Educación", "C. de la Educación", "Educación Primaria"),
-        ("Ciencias de la Educación", "C. de la Educación", "Educación Secundaria - Ciencias Sociales y Filosofía con mención en Turismo"),
-        ("Ciencias de la Educación", "C. de la Educación", "Educación Secundaria - Inglés y Lengua Española"),
-        ("Ciencias de la Educación", "C. de la Educación", "Educación Secundaria - Matemática Física y Informática"),
-        ("Ciencias de la Educación", "C. de la Educación", "Educación Secundaria - Lengua Española y Literatura con mención en Comunicación"),
-        ("Ciencias de la Salud", "C. de la Salud", "Enfermería"),
-        ("Ciencias de la Salud", "C. de la Salud", "Farmacia y Bioquímica"),
-        ("Ciencias de la Salud", "C. de la Salud", "Medicina Humana"),
-        ("Ciencias de la Salud", "C. de la Salud", "Obstetricia"),
-        ("Ciencias Económicas, Administrativas y Contables", "FACEAC", "Administración de Empresas"),
-        ("Ciencias Económicas, Administrativas y Contables", "FACEAC", "Contabilidad y Auditoría"),
-        ("Ciencias Económicas, Administrativas y Contables", "FACEAC", "Economía"),
-        ("Ciencias Sociales", "C. Sociales", "Antropología Social"),
-        ("Ciencias Sociales", "C. Sociales", "Arqueología e Historia"),
-        ("Ciencias Sociales", "C. Sociales", "Arqueología e Historia - Arqueología"),
-        ("Ciencias Sociales", "C. Sociales", "Arqueología e Historia - Historia"),
-        ("Ciencias Sociales", "C. Sociales", "Ciencias de la Comunicación"),
-        ("Ciencias Sociales", "C. Sociales", "Trabajo Social"),
-        ("Derecho y Ciencias Políticas", "Derecho", "Derecho"),
-        ("Ingeniería de Minas, Geología y Civil", "FIMGC", "Ciencias Físico-Matemáticas"),
-        ("Ingeniería de Minas, Geología y Civil", "FIMGC", "Ciencias Físico-Matemáticas - Matemática"),
-        ("Ingeniería de Minas, Geología y Civil", "FIMGC", "Ciencias Físico-Matemáticas - Física"),
-        ("Ingeniería de Minas, Geología y Civil", "FIMGC", "Ciencias Físico-Matemáticas - Estadística"),
-        ("Ingeniería de Minas, Geología y Civil", "FIMGC", "Ingeniería Civil"),
-        ("Ingeniería de Minas, Geología y Civil", "FIMGC", "Ingeniería de Minas"),
-        ("Ingeniería de Minas, Geología y Civil", "FIMGC", "Ingeniería de Sistemas"),
-        ("Ingeniería de Minas, Geología y Civil", "FIMGC", "Ingeniería Informática"),
-        ("Ingeniería Química y Metalurgia", "FIQM", "Ingeniería Agroindustrial"),
-        ("Ingeniería Química y Metalurgia", "FIQM", "Ingeniería en Industrias Alimentarias"),
-        ("Ingeniería Química y Metalurgia", "FIQM", "Ingeniería Química")
+        ("Ciencias Agrarias", "C. Agrarias", "Agronomía", "P01"),
+        ("Ciencias Agrarias", "C. Agrarias", "Ingeniería Agrícola", "P28"),
+        ("Ciencias Agrarias", "C. Agrarias", "Ingeniería Agroforestal", "P36"),
+        ("Ciencias Agrarias", "C. Agrarias", "Medicina Veterinaria", "P31"),
+        ("Ciencias Biológicas", "C. Biológicas", "Biología", ""),
+        ("Ciencias Biológicas", "C. Biológicas", "Biología - Microbiología", "P02"),
+        ("Ciencias Biológicas", "C. Biológicas", "Biología - Biotecnología", "P03"),
+        ("Ciencias Biológicas", "C. Biológicas", "Biología - Ecología y Recursos Naturales", "P04"),
+        ("Ciencias de la Educación", "C. de la Educación", "Educación Inicial", "P05"),
+        ("Ciencias de la Educación", "C. de la Educación", "Educación Primaria", "P06"),
+        ("Ciencias de la Educación", "C. de la Educación", "Educación Secundaria - Lengua Española y Literatura", "P07"),
+        ("Ciencias de la Educación", "C. de la Educación", "Educación Secundaria - Inglés y Lengua Española", "P08"),
+        ("Ciencias de la Educación", "C. de la Educación", "Educación Secundaria - Ciencias Sociales, Filosofía y Psicología", "P09"),
+        ("Ciencias de la Educación", "C. de la Educación", "Educación Secundaria - Matemática, Física e Informática", "P10"),
+        ("Ciencias de la Educación", "C. de la Educación", "Educación Física", ""),
+        ("Ciencias de la Educación", "C. de la Educación", "Educación Física - Entrenamiento Deportivo", "P11"),
+        ("Ciencias de la Educación", "C. de la Educación", "Educación Física - Gestión Deportiva", "P12"),
+        ("Ciencias de la Educación", "C. de la Educación", "Educación Física - Promoción de la Salud Social", "P13"),
+        ("Ciencias de la Salud", "C. de la Salud", "Enfermería", "P22"),
+        ("Ciencias de la Salud", "C. de la Salud", "Farmacia y Bioquímica", "P27"),
+        ("Ciencias de la Salud", "C. de la Salud", "Medicina Humana", "P37"),
+        ("Ciencias de la Salud", "C. de la Salud", "Obstetricia", "P25"),
+        ("Ciencias Económicas, Administrativas y Contables", "FACEAC", "Administración de Empresas", "P14"),
+        ("Ciencias Económicas, Administrativas y Contables", "FACEAC", "Contabilidad y Auditoría", "P15"),
+        ("Ciencias Económicas, Administrativas y Contables", "FACEAC", "Economía", "P16"),
+        ("Ciencias Sociales", "C. Sociales", "Antropología Social", "P17"),
+        ("Ciencias Sociales", "C. Sociales", "Arqueología e Historia", ""),
+        ("Ciencias Sociales", "C. Sociales", "Arqueología e Historia - Arqueología", "P18"),
+        ("Ciencias Sociales", "C. Sociales", "Arqueología e Historia - Historia", "P19"),
+        ("Ciencias Sociales", "C. Sociales", "Ciencias de la Comunicación", "P30"),
+        ("Ciencias Sociales", "C. Sociales", "Trabajo Social", "P20"),
+        ("Derecho y Ciencias Políticas", "Derecho", "Derecho", "P21"),
+        ("Ingeniería de Minas, Geología y Civil", "FIMGC", "Ciencias Físico-Matemáticas", ""),
+        ("Ingeniería de Minas, Geología y Civil", "FIMGC", "Ciencias Físico-Matemáticas - Matemática", "P32"),
+        ("Ingeniería de Minas, Geología y Civil", "FIMGC", "Ciencias Físico-Matemáticas - Física", "P33"),
+        ("Ingeniería de Minas, Geología y Civil", "FIMGC", "Ciencias Físico-Matemáticas - Estadística", "P34"),
+        ("Ingeniería de Minas, Geología y Civil", "FIMGC", "Ingeniería Civil", "P24"),
+        ("Ingeniería de Minas, Geología y Civil", "FIMGC", "Ingeniería de Minas", "P23"),
+        ("Ingeniería de Minas, Geología y Civil", "FIMGC", "Ingeniería de Sistemas", "P35"),
+        ("Ingeniería de Minas, Geología y Civil", "FIMGC", "Ingeniería Informática", ""),
+        ("Ingeniería Química y Metalurgia", "FIQM", "Ingeniería Agroindustrial", "P29"),
+        ("Ingeniería Química y Metalurgia", "FIQM", "Ingeniería en Industrias Alimentarias", "P26"),
+        ("Ingeniería Química y Metalurgia", "FIQM", "Ingeniería Química", "P38")
     ]
 
     # Insertar datos en las tablas Facultad y Escuela
-    for facultad, sigla, escuela in facultades_escuelas:
+    for facultad, sigla, escuela, codigo in facultades_escuelas:
         # Verificar si la facultad ya existe
         cursor.execute(
             "SELECT id_facultad FROM Facultad WHERE nombre_facultad = ?", (facultad,))
@@ -321,7 +308,7 @@ def insert_basic_data(cursor):
         if not escuela_id:
             # Si la Escuela no existe, la insertamos
             cursor.execute(
-                "INSERT INTO Escuela (nombre_escuela, id_facultad) VALUES (?, ?)", (escuela, facultad_id))
+                "INSERT INTO Escuela (nombre_escuela, codigo_escuela, id_facultad) VALUES (?, ?, ?)", (escuela, codigo, facultad_id))
             escuela_id = cursor.lastrowid
         else:
             escuela_id = escuela_id[0]
@@ -330,157 +317,166 @@ def insert_basic_data(cursor):
     escuelas_planes = {
         "Agronomía": [
             ('2015-08-24', "Nº 401-2015-UNSCH-CU", "Currículo 2004 revisado - Agronomía", "Objetivos", 
-            "No figura DEPART. ACADEMICO/ No figura HL (HP y HL están unidos en HP, además la suma de horas figura como 12, debe ser 13)/En el curso LE141, TH registra 4 debe ser 5 / Cursos de ACTIVIDADES CO CURRICULARES difieren en los cursos que no suman créditos. / En ÁREA ACADÉMICA DE HIDROLOGÍA agrega el curso SU556 Manejo de cuencas, en la Resolución no figura / (CURRÍCULO ENVIADO POR LA EPA NO ES EL ACTUALIZADO)"),
-            ('', "", "CURRÍCULO-2018 - Agronomía", "","") 
+            "No figura DEPART. ACADEMICO/ No figura HL (HP y HL están unidos en HP, además la suma de horas figura como 12, debe ser 13)/En el curso LE141, TH registra 4 debe ser 5 / Cursos de ACTIVIDADES CO CURRICULARES difieren en los cursos que no suman créditos. / En ÁREA ACADÉMICA DE HIDROLOGÍA agrega el curso SU556 Manejo de cuencas, en la Resolución no figura / (CURRÍCULO ENVIADO POR LA EPA NO ES EL ACTUALIZADO)","docs/planes/2004/01 Agronomía Currículo 2004 Revisado.pdf"),
+            ('', "", "CURRÍCULO-2018 - Agronomía", "","","docs/planes/2018/PROGRAMA_P01_CURRÍCULO AGRONOMÍA.pdf") 
         ],
         "Ingeniería Agrícola": [
-            ('2016-07-22', "455-2016-UNSCH-CU", "Currículo 2004 Revisado - Agrícola", "Objetivos", "Ninguna"),
-            ('', "", "CURRÍCULO 2018 - Agrícola", "","")
+            ('2016-07-22', "455-2016-UNSCH-CU", "Currículo 2004 Revisado - Agrícola", "Objetivos", "Ninguna", "docs/planes/2004/21 Ingeniería Agrícola Currículo 2004 Revisado.pdf"),
+            ('', "", "CURRÍCULO 2018 - Agrícola", "","","docs/planes/2018/PROGRAMA_P28_CURRÍCULO INGENIERÍA AGRÍCOLA.pdf")
         ],
         "Ingeniería Agroforestal": [
-            ('2015-08-24', "Nº 402-2015-UNSCH-CU", "Currículo 2009 revisado - Agroforestal", "Objetivos", "Ninguna"),
-            ('', "", "CURRÍCULO 2018 - Agroforestal", "","")
+            ('2015-08-24', "Nº 402-2015-UNSCH-CU", "Currículo 2009 revisado - Agroforestal", "Objetivos", "Ninguna", "docs/planes/2004/28 Ingeniería Agroforestal Currículo 2009 Revisado.pdf"),
+            ('', "", "CURRÍCULO 2018 - Agroforestal", "","","docs/planes/2018/PROGRAMA_P36_CURRÍCULO INGENIERÍA AGROFORESTAL.pdf")
         ],
         "Medicina Veterinaria": [
-            ('2016-02-23', "121-2016-UNSCH-R", "Currículo 2004 Revisado - Veterinaria", "Objetivos", "Ninguna"),
-            ('', "", "CURRÍCULO 2018 - Veterinaria", "","")
+            ('2016-02-23', "121-2016-UNSCH-R", "Currículo 2004 Revisado - Veterinaria", "Objetivos", "Ninguna", "docs/planes/2004/24 Medicina Veterinaria Currículo 2004 Revisado.pdf"),
+            ('', "", "CURRÍCULO 2018 - Veterinaria", "","","docs/planes/2018/PROGRAMA_P31_CURRÍCULO MEDICINA VETERINARIA.pdf")
         ],
         "Educación Inicial": [
-            ('2015-09-21', "N° 532-2015-UNSCH-CU", "Currículo 2004 - revisado - Inicial", "Objetivos", "Ninguna"),
-            ('', "", "CURRÍCULO 2018 - Inicial", "","")
+            ('2015-09-21', "N° 532-2015-UNSCH-CU", "Currículo 2004 - revisado - Inicial", "Objetivos", "Ninguna", "docs/planes/2004/03 Educación Inicial Currículo 2004 Revisado.pdf"),
+            ('', "", "CURRÍCULO 2018 - Inicial", "","","docs/planes/2018/PROGRAMA_P05_CURRÍCULO EDUCACIÓN INICIAL.pdf")
         ],
         "Educación Primaria": [
-            ('2016-06-30', "RCU N° 379-2016-UNSCH-CU", "Currículo 2004 Reajustado revisado - Primaria", "Objetivos", "Ninguna"),
-            ('', "", "CURRÍCULO 2018 - Primaria", "","")
+            ('2016-06-30', "RCU N° 379-2016-UNSCH-CU", "Currículo 2004 Reajustado revisado - Primaria", "Objetivos", "Ninguna", "docs/planes/2004/04 Educación Primaria Currículo 2004 Revisado.pdf"),
+            ('', "", "CURRÍCULO 2018 - Primaria", "","","docs/planes/2018/PROGRAMA_P06_CURRÍCULO EDUCACIÓN PRIMARIA.pdf")
         ],
-        "Educación Secundaria - Ciencias Sociales y Filosofía con mención en Turismo": [
-            ('', "", "Revisado 2004 - Turismo", "Objetivos", "Ninguna"),
-            ('', "", "CURRÍCULO 2018 - Turismo", "","")
+        "Educación Secundaria - Ciencias Sociales, Filosofía y Psicología": [
+            ('', "", "Revisado 2004 - Turismo", "Objetivos", "Ninguna", "docs/planes/2004/05 Educación Secundaria 2004 Revisado.pdf"),
+            ('', "", "CURRÍCULO 2018 - Turismo", "","","docs/planes/2018/PROGRAMA_P09_CURRÍCULO EDUCACIÓN SECUNDARIA_CIENCIAS SOCIALES Y FILOSOFÍA.pdf")
         ],
         "Educación Secundaria - Inglés y Lengua Española": [
-            ('', "", "Revisado 2004 - Inglés", "Objetivos", "Ninguna"),
-            ('', "", "CURRÍCULO 2018 - Inglés", "","")
+            ('', "", "Revisado 2004 - Inglés", "Objetivos", "Ninguna", "docs/planes/2004/05 Educación Secundaria 2004 Revisado.pdf"),
+            ('', "", "CURRÍCULO 2018 - Inglés", "","","docs/planes/2018/PROGRAMA_P08_CURRÍCULO EDUCACIÓN SECUNDARIA_INGLÉS Y LENGUA ESPAÑOLA.pdf")
         ],
-        "Educación Secundaria - Matemática Física y Informática": [
+        "Educación Secundaria - Matemática, Física e Informática": [
             ('2020-02-12', "153-2020-UNSCH-R", "Currículo 2004 - Reajustado y Adecuado a la Ley 30220 - Matemática (ES)", "Competencias", 
-            "Incongruente, el currículo que maneja la OGA es distinto a los que se encuentran en la Secretaría General."),
-            ('', "", "CURRÍCULO 2018 - Matemática (ES)", "","")
+            "Incongruente, el currículo que maneja la OGA es distinto a los que se encuentran en la Secretaría General.", "docs/planes/2004/05 Educación Secundaria 2004 Revisado.pdf"),
+            ('', "", "CURRÍCULO 2018 - Matemática (ES)", "","","docs/planes/2018/PROGRAMA_P10_CURRÍCULO EDUCACIÓN SECUNDARIA_MATEMÁTICA, FÍSICA E INFORMÁTICA.pdf")
         ],
-        "Educación Secundaria - Lengua Española y Literatura con mención en Comunicación": [
+        "Educación Secundaria - Lengua Española y Literatura": [
             ('2020-02-12', "153-2020-UNSCH-R", "Currículo 2004 - Adecuado a la Ley 30220 - Lengua y Literatura", "Competencias", 
-            "Incongruente, el currículo que maneja la OGA es distinto a los que se encuentran en la Secretaría General."),
-            ('', "", "CURRÍCULO 2018 - Lengua y Literatura", "", "")
+            "Incongruente, el currículo que maneja la OGA es distinto a los que se encuentran en la Secretaría General.", "docs/planes/2004/05 Educación Secundaria 2004 Revisado.pdf"),
+            ('', "", "CURRÍCULO 2018 - Lengua y Literatura", "", "","docs/planes/2018/PROGRAMA_P07_CURRÍCULO EDUCACIÓN SECUNDARIA_LENGUA ESPAÑOLA Y LITERATURA.pdf")
         ],
         "Educación Física": [
-            ('2015-09-21', "533-2015-UNSCH-CU", "Currículo 2004 - Revisado - Ed. Física", "Objetivos", "Ninguna"),
-            ('', "", "CURRÍCULO 2018 - Ed. Física", "","")
+            ('2015-09-21', "533-2015-UNSCH-CU", "Currículo 2004 - Revisado - Ed. Física", "Objetivos", "Ninguna", "docs/planes/2004/06 Educación Física Currículo 2004 Revisado.pdf")
         ],
+        "Educación Física - Entrenamiento Deportivo": [
+            ('', "", "CURRÍCULO 2018 - Entrenamiento Deportivo", "","","docs/planes/2018/PROGRAMA_P11_P12_P13_CURRÍCULO EDUCACIÓN FÍSICA.pdf")
+        ],
+        "Educación Física - Gestión Deportiva": [
+            ('', "", "CURRÍCULO 2018 - Gestión Deportiva", "","","docs/planes/2018/PROGRAMA_P11_P12_P13_CURRÍCULO EDUCACIÓN FÍSICA.pdf")
+        ],
+        "Educación Física - Promoción de la Salud Social": [
+            ('', "", "CURRÍCULO 2018 - Promoción de la Salud Social", "","","docs/planes/2018/PROGRAMA_P11_P12_P13_CURRÍCULO EDUCACIÓN FÍSICA.pdf")
+        ],
+
         "Administración de Empresas": [
-            ('', "", "Currículo 2004 - Administración", "Objetivos", "Ninguna"),
-            ('', "", "CURRÍCULO 2018 - Administración", "","")
+            ('', "", "Currículo 2004 - Administración", "Objetivos", "Ninguna", "docs/planes/2004/07 Administración de Empresas Currículo 2004.pdf"),
+            ('', "", "CURRÍCULO 2018 - Administración", "","","docs/planes/2018/PROGRAMA_P14_CURRÍCULO ADMINISTRACIÓN DE EMPRESAS.pdf")
         ],
         "Contabilidad y Auditoría": [
-            ('2016-01-12', "N° 055-2016-UNSCH-CU", "Currículo 2004 - Revisado - Contabilidad", "Objetivos", "Ninguna"),
-            ('', "", "CURRÍCULO 2018 - Contabilidad", "","")
+            ('2016-01-12', "N° 055-2016-UNSCH-CU", "Currículo 2004 - Revisado - Contabilidad", "Objetivos", "Ninguna", "docs/planes/2004/08 Contabilidad y Auditoría Currículo 2004 Revisado.pdf"),
+            ('', "", "CURRÍCULO 2018 - Contabilidad", "","","docs/planes/2018/PROGRAMA_P15_CURRÍCULO CONTABILIDAD Y AUDITORÍA.pdf")
         ],
         "Economía": [
-            ('2016-01-14', "N° 067-2016-UNSCH-CU", "Currículo 2004 - Revisado - Economía", "Objetivos", "Ninguna"),
-            ('', "", "CURRÍCULO 2018 - Economía", "","")
+            ('2016-01-14', "N° 067-2016-UNSCH-CU", "Currículo 2004 - Revisado - Economía", "Objetivos", "Ninguna", "docs/planes/2004/09 Economía Currículo 2004 Revisado.pdf"),
+            ('', "", "CURRÍCULO 2018 - Economía", "","","docs/planes/2018/PROGRAMA_P16_CURRÍCULO ECONOMÍA.pdf")
         ],
         "Antropología Social": [
-            ('2016-01-27', "N° 056-2016-UNSCH-R", "Currículo 2004- Revisado - Antropología", "Objetivos", "Ninguna"),
-            ('', "", "CURRÍCULO 2018 - Antropología", "","")
+            ('2016-01-27', "N° 056-2016-UNSCH-R", "Currículo 2004- Revisado - Antropología", "Objetivos", "Ninguna", "docs/planes/2004/10 Antropología Social Currículo 2004 Revisado.pdf"),
+            ('', "", "CURRÍCULO 2018 - Antropología", "","","docs/planes/2018/PROGRAMA_P17_CURRÍCULO ANTROPOLOGÍA SOCIAL.pdf")
         ],
         "Ciencias de la Comunicación": [
             ('2016-07-11', "393-2016-UNSCH-CU", "Currículo estudios 2004 Revisado - Comunicación", "Objetivos", 
-            "En el curso PRACTICA PREPROFESIONAL la sigla figura como PPCC-542, debe ser PP-542"),
-            ('', "", "CURRÍCULO 2018 - Comunicación", "","")
+            "En el curso PRACTICA PREPROFESIONAL la sigla figura como PPCC-542, debe ser PP-542", "docs/planes/2004/23 Ciencias de la Comunicación Currículo 2004 Revisado.pdf"),
+            ('', "", "CURRÍCULO 2018 - Comunicación", "","","docs/planes/2018PROGRAMA_P30_CURRÍCULO CIENCIAS DE LA COMUNICACIÓN.pdf")
         ],
         "Trabajo Social": [
-            ('2016-02-23', "120-2016-UNSCH-R", "CURRÍCULO 2004 - Revisado - Trabajo Social", "Objetivos", "Falta consignar la malla curricular en DIGITAL"),
-            ('', "", "CURRÍCULO 2018 - Trabajo Social", "","")
+            ('2016-02-23', "120-2016-UNSCH-R", "CURRÍCULO 2004 - Revisado - Trabajo Social", "Objetivos", "Falta consignar la malla curricular en DIGITAL", "docs/planes/2004/12 Trabajo Social Currículo 2004 Revisado.pdf"),
+            ('', "", "CURRÍCULO 2018 - Trabajo Social", "","","docs/planes/2018/PROGRAMA_P20_CURRÍCULO TRABAJO SOCIAL.pdf")
         ],
         "Arqueología e Historia": [
-            ('2011-07-18', "N° 550-2011-UNSCH-CU", "Currículo 2004- Reajustado - Arqueología", "Objetivos", "Ninguna"),
+            ('2011-07-18', "N° 550-2011-UNSCH-CU", "Currículo 2004- Reajustado - Arqueología", "Objetivos", "Ninguna", "docs/planes/2004/11 Arqueología e Historia Currículo 2004 Reajustado.pdf"),
         ],
         "Arqueología e Historia - Arqueología": [
-            ('', "", "CURRÍCULO 2018 - Arqueología", "","")
+            ('', "", "CURRÍCULO 2018 - Arqueología", "","","docs/planes/2018/PROGRAMA_P18_CURRÍCULO ARQUEOLOGÍA E HISTORIA_ARQUEOLOGÍA.pdf")
         ],
         "Arqueología e Historia - Historia": [
-            ('', "", "CURRÍCULO 2018 - Historia", "","")
+            ('', "", "CURRÍCULO 2018 - Historia", "","","docs/planes/2018/PROGRAMA_P19_CURRÍCULO ARQUEOLOGÍA E HISTORIA_HISTORIA.pdf")
         ],
         "Derecho": [
-            ('2016-01-12', "N° 057-2016-UNSCH-CU", "Currículo 2004 - Revisado - Derecho", "Objetivos", "Ninguna"),
-            ('', "", "CURRÍCULO 2018 - Derecho", "","")
+            ('2016-01-12', "N° 057-2016-UNSCH-CU", "Currículo 2004 - Revisado - Derecho", "Objetivos", "Ninguna", "docs/planes/2004/13 Derecho Currículo 2004 Revisado.pdf"),
+            ('', "", "CURRÍCULO 2018 - Derecho", "","","docs/planes/2018/PROGRAMA_P21_CURRÍCULO DERECHO.pdf")
         ],
         "Ingeniería de Minas": [
-            ('2016-07-22', "453-2016-UNSCH-CU", "Currículo 2004 Revisado - Minas", "Objetivos", "Ninguna"),
-            ('', "", "CURRÍCULO 2018 - Minas", "","")
+            ('2016-07-22', "453-2016-UNSCH-CU", "Currículo 2004 Revisado - Minas", "Objetivos", "Ninguna", "docs/planes/2004/15 Ingeniería de Minas Currículo 2004 Revisado.pdf"),
+            ('', "", "CURRÍCULO 2018 - Minas", "","","docs/planes/2018/PROGRAMA_P23_CURRÍCULO INGENIERÍA DE MINAS.pdf")
         ],
         "Ingeniería Civil": [
             ('2016-08-10', "N° 473-2016-UNSCH-CU", "Currículo 2004 - Revisado - Civil", "Objetivos", 
-            "No coincide el contenido (índice) en lo físico y digital. En el digital no se encuentra la malla curricular. Y algunos puntos donde especifica la revisión no coincide con el currículo DIGITAL entregado por la escuela."),
-            ('', "", "CURRÍCULO 2018 - Civil", "","")
+            "No coincide el contenido (índice) en lo físico y digital. En el digital no se encuentra la malla curricular. Y algunos puntos donde especifica la revisión no coincide con el currículo DIGITAL entregado por la escuela.", "docs/planes/2004/16 Ingeniería Civil Currículo 2004 Revisado.pdf"),
+            ('', "", "CURRÍCULO 2018 - Civil", "","","docs/planes/2018/PROGRAMA_P24_CURRÍCULO INGENIERÍA CIVIL.pdf")
         ],
         "Ingeniería de Sistemas": [
-            ('2016-07-22', "456-2016-UNSCH-CU", "Currículo de estudios 2005 Revisado - Sistemas", "Objetivos", "Ninguna"),
-            ('', "", "CURRÍCULO 2018 - Sistemas", "","")
+            ('2016-07-22', "456-2016-UNSCH-CU", "Currículo de estudios 2005 Revisado - Sistemas", "Objetivos", "Ninguna", "docs/planes/2004/27 Ingeniería de Sistemas Curriculo 2005 Revisado.pdf"),
+            ('', "", "CURRÍCULO 2018 - Sistemas", "","","docs/planes/2018/PROGRAMA_P35_CURRÍCULO INGENIERÍA DE SISTEMAS.pdf")
         ],
         "Ciencias Físico-Matemáticas": [
-            ('2019-02-28', "236-2019-UNSCH-R", "CURRÍCULO 1998 Matemáticas-Reajustado - Físico-Matemáticas", "Objetivos", "Ninguna")
+            ('2019-02-28', "236-2019-UNSCH-R", "CURRÍCULO 1998 Matemáticas-Reajustado - Físico-Matemáticas", "Objetivos", "Ninguna", "docs/planes/2004/26 Ciencias Fisico Matematicas Curriculo 1998 Revisado.pdf")
         ],
         "Ciencias Físico-Matemáticas - Matemática": [
-            ('', "", "CURRÍCULO 2018 - Matemática", "", "")
+            ('', "", "CURRÍCULO 2018 - Matemática", "", "","docs/planes/2018/PROGRAMA_P32_CURRÍCULO MATEMÁTICA.pdf")
         ],
         "Ciencias Físico-Matemáticas - Física": [
-            ('', "", "CURRÍCULO 2018 - Física", "", "")
+            ('', "", "CURRÍCULO 2018 - Física", "", "","docs/planes/2018/PROGRAMA_P33_CURRÍCULO FÍSICA.pdf")
         ],
         "Ciencias Físico-Matemáticas - Estadística": [
-            ('', "", "CURRÍCULO 2018 - Estadística", "", "")
+            ('', "", "CURRÍCULO 2018 - Estadística", "", "","docs/planes/2018PROGRAMA_P34_CURRÍCULO ESTADÍSTICA.pdf")
         ],
         "Ingeniería Química": [
-            ('2020-07-30', "N° 249-2020-UNSCH-CU", "Currículo 2004 - Revisado - Química", "Competencias", "Ninguna"),
-            ('', "", "CURRÍCULO 2018 - Química", "","")
+            ('2020-07-30', "N° 249-2020-UNSCH-CU", "Currículo 2004 - Revisado - Química", "Competencias", "Ninguna", "docs/planes/2004/17 Ingeniería Química Currículo 2004 Revisado.pdf"),
+            ('', "", "CURRÍCULO 2018 - Química", "","","docs/planes/2018/PROGRAMA_P38_CURRÍCULO INGENIERÍA QUÍMICA.pdf")
         ],
         "Ingeniería en Industrias Alimentarias": [
             ('2015-11-03', "N° 670-2015-UNSCH-CU", "Currículo 2004 - Revisado - Alimentarias", "Objetivos", 
-            "No coincide el contenido (índice) y no registra el cuadro de Departamento académico en cada semestre. La malla curricular está elaborada con diferentes formatos."),
-            ('', "", "CURRÍCULO 2018 - Alimentarias", "","")
+            "No coincide el contenido (índice) y no registra el cuadro de Departamento académico en cada semestre. La malla curricular está elaborada con diferentes formatos.", "docs/planes/2004/19 Ingeniería en Industrias Alimentarias Currículo 2004 Revisado.pdf"),
+            ('', "", "CURRÍCULO 2018 - Alimentarias", "","","docs/planes/2018/PROGRAMA_P26_CURRÍCULO INGENIERÍA EN INDÚSTRIAS ALIMENTARIAS.pdf")
         ],
         "Ingeniería Agroindustrial": [
             ('2016-01-20', "Nº 102-2016-UNSCH-CU", "Currículo 2004 - Reajustado - Agroindustrial", "Objetivos", 
-            "No figura en DIGITAL la malla curricular / El cuadro de equivalencias de la escuela NO figura en el currículo FISICO"),
-            ('', "", "CURRÍCULO 2018 - Agroindustrial", "","")
+            "No figura en DIGITAL la malla curricular / El cuadro de equivalencias de la escuela NO figura en el currículo FISICO", "docs/planes/2004/22 Ingeniería Agroindustrial Currículo 2004 Revisado.pdf"),
+            ('', "", "CURRÍCULO 2018 - Agroindustrial", "","","docs/planes/2018/PROGRAMA_P29_CURRÍCULO INGENIERÍA AGROINDUSTRIAL.pdf")
         ],
         "Enfermería": [
-            ('2015-08-24', "Nº 403-2015-UNSCH-CU", "Currículo 2004 - Revisado - Enfermería", "Competencias", "Ninguna"),
-            ('', "", "CURRÍCULO 2018 - Enfermería", "","")
+            ('2015-08-24', "Nº 403-2015-UNSCH-CU", "Currículo 2004 - Revisado - Enfermería", "Competencias", "Ninguna", "docs/planes/2004/14 Enfermería Currículo 2004 Revisado.pdf"),
+            ('', "", "CURRÍCULO 2018 - Enfermería", "","","docs/planes/2018/PROGRAMA_P22_CURRÍCULO ENFERMERÍA.pdf")
         ],
         "Obstetricia": [
             ('2019-02-06', "N° 157-2019-UNSCH-R", "Currículo 2004 - Actualizado - Obstetricia", "Competencias", 
-            "Incongruente, el currículo que maneja la OGA es CURRÍCULO 2004 REAJUSTADO, debe ser CURRÍCULO 2004 ACTUALIZADO, según resolución aprobado el 06/02/2019."),
-            ('', "", "CURRÍCULO 2018 - Obstetricia", "","")
+            "Incongruente, el currículo que maneja la OGA es CURRÍCULO 2004 REAJUSTADO, debe ser CURRÍCULO 2004 ACTUALIZADO, según resolución aprobado el 06/02/2019.", "docs/planes/2004/18 Obstetricia Currículo 2004 Revisado.pdf"),
+            ('', "", "CURRÍCULO 2018 - Obstetricia", "","","docs/planes/2018/PROGRAMA_P25_CURRÍCULO OBSTETRICIA.pdf")
         ],
         "Farmacia y Bioquímica": [
             ('2016-01-12', "Nº 056-2016-UNSCH-CU", "Currículo 2004 - Revisado - Farmacia", "Objetivos", 
-            "No figura los departamentos académicos en la Distribución de asignaturas, en el currículo que nos facilitó la escuela."),
-            ('', "", "CURRÍCULO 2018 - Farmacia", "","")
+            "No figura los departamentos académicos en la Distribución de asignaturas, en el currículo que nos facilitó la escuela.", "docs/planes/2004/20 Farmacia y Bioquímica Currículo 2004 revisado.pdf"),
+            ('', "", "CURRÍCULO 2018 - Farmacia", "","","docs/planes/2018/PROGRAMA_P27_CURRÍCULO FARMACIA Y BIOQUÍMICA.pdf")
         ],
         "Medicina Humana": [
-            ('2020-05-19', "171-2020-UNSCH-CU", "Currículo 2012 - Reajustado - Medicina", "Competencias", "Ninguna"),
-            ('', "", "CURRÍCULO 2018 - Medicina", "","")
+            ('2020-05-19', "171-2020-UNSCH-CU", "Currículo 2012 - Reajustado - Medicina", "Competencias", "Ninguna", "docs/planes/2004/29 Medicina Humana Currículo 2012 Reajustado.pdf"),
+            ('', "", "CURRÍCULO 2018 - Medicina", "","","docs/planes/2018/PROGRAMA_P37_CURRÍCULO MEDICINA HUMANA.pdf")
         ],
         "Biología": [
-            ('2016-07-22', "N° 454-2016-UNSCH-CU", "Currículo 2004 - Revisado - Biología", "Objetivos", "Ninguna")
+            ('2016-07-22', "N° 454-2016-UNSCH-CU", "Currículo 2004 - Revisado - Biología", "Objetivos", "Ninguna", "docs/planes/2004/02 Biología Currículo 2004 Revisado.pdf")
         ],
         "Biología - Microbiología": [
-            ('', "", "CURRÍCULO 2018 - Microbiología", "","")
+            ('', "", "CURRÍCULO 2018 - Microbiología", "","","docs/planes/2018/PROGRAMA_P02_CURRÍCULO MICROBIOLOGÍA.pdf")
         ],
         "Biología - Biotecnología": [
-            ('', "", "CURRÍCULO 2018 - Biotecnología", "","")
+            ('', "", "CURRÍCULO 2018 - Biotecnología", "","","docs/planes/2018/PROGRAMA_P03_CURRÍCULO BIOTECNOLOGÍA.pdf")
         ],
         "Biología - Ecología y Recursos Naturales": [
-            ('', "", "CURRÍCULO 2018 - Ecología", "","")
+            ('', "", "CURRÍCULO 2018 - Ecología", "","","docs/planes/2018/PROGRAMA_P04_CURRÍCULO ECOLOGÍA Y RECURSOS NATURALES.PDF")
         ]
     } 
 
@@ -502,8 +498,8 @@ def insert_basic_data(cursor):
 
                 if not plan_id:
                     cursor.execute(
-                        "INSERT INTO Plan_Estudios (fecha_plan, resolucion_plan, denominacion_plan, enfoque_plan, observacion_plan, id_escuela) VALUES (?, ?, ?, ?, ?, ?)",
-                        (plan[0], plan[1], plan[2], plan[3], plan[4], escuelax_id)
+                        "INSERT INTO Plan_Estudios (fecha_plan, resolucion_plan, denominacion_plan, enfoque_plan, observacion_plan, rutaArchivo_plan, id_escuela) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                        (plan[0], plan[1], plan[2], plan[3], plan[4], plan[5], escuelax_id)
                     )
                     print(f"Plan '{plan[2]}' insertado para la escuela '{escuelax}'.")
                 else:
