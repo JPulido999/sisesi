@@ -1,4 +1,5 @@
 # Carpetas y archivos de entorno
+entornosisesipc/
 entornosisesi/
 .vscode/
 
@@ -13,16 +14,16 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# Distribución / empaquetado
+# Distribuciï¿½n / empaquetado
 build/
 dist/
 *.egg-info/
 
-# Archivos del entorno de ejecución
+# Archivos del entorno de ejecuciï¿½n
 *.log
 *.pot
 *.pyc
 *.pyo
 
-# Configuración de IDEs
+# Configuraciï¿½n de IDEs
 .idea/
