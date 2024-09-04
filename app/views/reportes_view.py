@@ -6,7 +6,9 @@ class ReportesView(tk.Toplevel):
         super().__init__()
         self.controller = controller
         self.title("Buscar Registros del Docente")
-        self.iconbitmap("C:\\Users\\Admin\\Desktop\\SISESI\\app\\resources\\images\\logo-unsch.ico")
+
+        # Asignar el icono mediante la función estática
+        GeneralOptionsView.icono_ventana(self)
 
         # Llamando función crear_boton
         self.informacion_img = GeneralOptionsView.crear_boton("info.png", 50)

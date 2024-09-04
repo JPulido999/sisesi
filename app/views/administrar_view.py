@@ -3,6 +3,7 @@ from tkinter import filedialog, messagebox, ttk
 from PIL import Image, ImageTk
 import os
 import PyPDF2  # Importar PyPDF2 para trabajar con PDFs
+from app.views.general_options_view import GeneralOptionsView
 
 class AdministrarView(tk.Toplevel):
     def __init__(self, controller):
@@ -10,7 +11,9 @@ class AdministrarView(tk.Toplevel):
         self.controller = controller
         self.title("Administrar PDF")
         self.geometry("400x600")  # Ampliar para ajustar nuevos campos
-        self.iconbitmap("C:\\Users\\Admin\\Desktop\\SISESI\\app\\resources\\images\\logo-unsch.ico")
+        
+        # Asignar el icono mediante la función estática
+        GeneralOptionsView.icono_ventana(self)
         
         self.select_pdf_button = tk.Button(self, text="Seleccionar PDF", command=self.select_pdf)
         self.select_pdf_button.pack(pady=10)

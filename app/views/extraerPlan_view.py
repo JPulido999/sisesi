@@ -9,7 +9,9 @@ class ExtraerPlanView(tk.Toplevel):
         self.controller = controller
         self.title("Extraer Planes de Trabajo")
         self.geometry("600x400")
-        self.iconbitmap("C:\\Users\\Admin\\Desktop\\SISESI\\app\\resources\\images\\logo-unsch.ico")
+
+        # Asignar el icono mediante la función estática
+        GeneralOptionsView.icono_ventana(self)
 
         self.extraer_img = GeneralOptionsView.crear_boton("extract-folder.png", 50)
 

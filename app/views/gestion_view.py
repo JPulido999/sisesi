@@ -9,7 +9,9 @@ class GestionView(tk.Toplevel):
         super().__init__()
         self.controller = controller
         self.title("Gestión de Tablas")
-        self.iconbitmap("C:\\Users\\Admin\\Desktop\\SISESI\\app\\resources\\images\\logo-unsch.ico")
+        
+        # Asignar el icono mediante la función estática
+        GeneralOptionsView.icono_ventana(self)
 
         GeneralOptionsView.views_headers(self)
 

@@ -5,6 +5,18 @@ import os
 class GeneralOptionsView():
 
     @staticmethod
+    def icono_ventana(window_instance):
+        # Obtener la ruta absoluta del directorio donde se encuentra este archivo
+        base_path = os.path.dirname(os.path.abspath(__file__))
+        # Retroceder una carpeta
+        parent_path = os.path.dirname(base_path)
+        # Construir la ruta del icono
+        icon_path = os.path.join(parent_path, "resources", "images", "logo-unsch.ico")
+        # Asignar el icono dinámicamente
+        window_instance.iconbitmap(icon_path)
+
+
+    @staticmethod
     def crear_boton(nombre, tamano):
         # Obtener la ruta del directorio de imágenes
         image_dir = os.path.join("app", "resources", "images")
@@ -41,7 +53,9 @@ class GeneralOptionsView():
         window_instance.geometry(f"{window_width}x{window_height}+{x}+{y}")
 
         # Cabecera con imagen
-        image_path = "C:\\Users\\Admin\\Desktop\\SISESI\\app\\resources\\images\\logodga.jpg"
+        # Obtener la ruta del directorio de imágenes
+        image_path = os.path.join("app", "resources", "images", "logodga.jpg")
+        # Construir la ruta completa a la imagen del botón
         header_image = Image.open(image_path)
         header_image = header_image.resize((403, 80), Image.LANCZOS)
         header_photo = ImageTk.PhotoImage(header_image)
