@@ -29,6 +29,23 @@ def create_tables():
                 FOREIGN KEY (id_docente) REFERENCES Docente(id_docente)
             )
         ''')
+              
+        # Crear la tabla Seguimiento
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS Seguimiento (
+                id_seguimiento INTEGER PRIMARY KEY,
+                dia_seguimiento VARCHAR(50),
+                hora_seguimiento TIME,
+                obs1_seguimiento VARCHAR(50),
+                obs2_seguimiento VARCHAR(50),
+                obs3_seguimiento VARCHAR(50),
+                obs4_seguimiento VARCHAR(50),
+                obs5_seguimiento VARCHAR(50),
+                comentarios_seguimiento VARCHAR(250),    
+                id_accion INTEGER,
+                FOREIGN KEY (id_accion) REFERENCES Accion(id_accion)
+            )
+        ''')
 
         # Crear la tabla Categoria_Actividad
         cursor.execute('''
