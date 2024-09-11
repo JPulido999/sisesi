@@ -22,6 +22,7 @@ class GestionView(tk.Toplevel):
         self.contrato_img = GeneralOptionsView.crear_boton("table.png", 50)
         self.accion_img = GeneralOptionsView.crear_boton("table.png", 50)
         self.licencia_img = GeneralOptionsView.crear_boton("table.png", 50)
+        self.seguimiento_img = GeneralOptionsView.crear_boton("table.png", 50)
 
         # Botones de gestión
         self.facultad_button = tk.Button(self, text="Gestionar Facultad",image=self.facultad_img, compound=tk.TOP, command=self.controller.open_facultad_view)
@@ -30,6 +31,7 @@ class GestionView(tk.Toplevel):
         self.contrato_button = tk.Button(self, text="Gestionar Contrato",image=self.contrato_img, compound=tk.TOP, command=self.controller.open_contrato_view)
         self.accion_button = tk.Button(self, text="Gestionar Accion",image=self.accion_img, compound=tk.TOP, command=self.controller.open_accion_view)
         self.licencia_button = tk.Button(self, text="Gestionar Licencia",image=self.licencia_img, compound=tk.TOP, command=self.controller.open_licencia_view)
+        self.seguimiento_button = tk.Button(self, text="Gestionar Seguimiento",image=self.seguimiento_img, compound=tk.TOP, command=self.controller.open_seguimiento_view)
 
         # Colocar los botones en una cuadrícula de 3x3
         buttons = [
@@ -38,7 +40,8 @@ class GestionView(tk.Toplevel):
             self.docente_button,
             self.contrato_button,
             self.accion_button,
-            self.licencia_button
+            self.licencia_button,
+            self.seguimiento_button
         ]
 
         row = 1

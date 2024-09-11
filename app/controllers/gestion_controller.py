@@ -6,6 +6,7 @@ from app.controllers.gestion.docente_controller import DocenteController
 from app.controllers.gestion.contrato_controller import ContratoController
 from app.controllers.gestion.accion_controller import AccionController
 from app.controllers.gestion.licencia_controller import LicenciaController
+from app.controllers.gestion.seguimiento_controller import SeguimientoController
 
 class GestionController:
 
@@ -17,6 +18,7 @@ class GestionController:
         self.contrato_controller = None   # Inicializar el controlador de contrato
         self.accion_controller = None   # Inicializar el controlador de contrato
         self.licencia_controller = None   # Inicializar el controlador de contrato
+        self.seguimiento_controller = None   # Inicializar el controlador de seguimiento
 
     def show_view(self):
         if not self.gestion_view or not self.gestion_view.winfo_exists():
@@ -55,3 +57,8 @@ class GestionController:
         if not self.licencia_controller:
             self.licencia_controller = LicenciaController()
         self.licencia_controller.show_view()
+
+    def open_seguimiento_view(self):
+        if not self.seguimiento_controller:
+            self.seguimiento_controller = SeguimientoController()
+        self.seguimiento_controller.show_view()

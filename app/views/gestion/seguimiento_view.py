@@ -94,7 +94,7 @@ class SeguimientoView(tk.Toplevel):
         # Ajustar tamaño de las columnas
         self.seguimiento_tree.column("ID", width=30)
         self.seguimiento_tree.column("Día", width=100)
-        self.seguimiento_tree.column("Hora ", width=100)
+        self.seguimiento_tree.column("Hora", width=100)
         self.seguimiento_tree.column("Puntualidad Docente", width=100)
         self.seguimiento_tree.column("Ambiente Adecuado", width=100)
         self.seguimiento_tree.column("Asistencia Alumnos", width=100)
